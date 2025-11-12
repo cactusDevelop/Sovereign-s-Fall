@@ -118,6 +118,8 @@ def get_player_data():
             data["player"]["max_pv"],
             data["player"]["stim"],
             data["player"]["max_stim"],
+            data["player"]["mana"],
+            data["player"]["max_mana"],
             weapons_inventory,
             objects_inventory)
 

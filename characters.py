@@ -21,10 +21,12 @@ class Character:
 
 
 class Player(Character):
-    def __init__(self, name:str, pv:int, max_pv:int, stim:int, max_stim:int, weapons:list, inventory:list):
+    def __init__(self, name:str, pv:int, max_pv:int, stim:int, max_stim:int, mana:int, max_mana:int, weapons:list, inventory:list):
         super().__init__(name, pv, max_pv)
         self.stim = stim
         self.max_stim = max_stim
+        self.mana = mana
+        self.max_mana = max_mana
         self.weapons = weapons
         self.inventory = inventory
         self.shield_pv = 0
@@ -33,6 +35,9 @@ class Player(Character):
     def charge(self, x):
         self.stim = min(self.stim+x, self.max_stim)
         self.can_ult = (self.stim == self.max_stim)
+
+    def mana_charge(self, x):
+        self.mana = min(self.mana + x, self.max_mana)
 
     def ult(self, target):
         if self.can_ult:

@@ -16,6 +16,22 @@ incognito = " \033[1;32m???\033[0m"
 starters = generate_starters()
 OBJ_STARTER = Object("Sac des abimes", "new_obj", 0)
 
+def get_width():
+    try:
+        columns = os.get_terminal_size().columns
+    except OSError:
+        columns = 80
+    return columns
+
+MAX_NAME_SIZE = get_width()//3
+def clean_nick(nickname):
+    nickname = nickname.strip()
+    if not nickname:
+        return f"Joueur{random.randint(1, 99)}"
+    if len(nickname) > MAX_NAME_SIZE:
+        return nickname[:MAX_NAME_SIZE-3]+"..."
+    return nickname
+
 def slow_print(txt: tuple):
     for _ in txt:
         print(_, end="")
@@ -39,13 +55,6 @@ def clear_console():
         os.system("cls")
     else:
         os.system("clear")
-
-def get_width():
-    try:
-        columns = os.get_terminal_size().columns
-    except OSError:
-        columns = 80
-    return columns
 
 def game_over(data,x:int,des:str):
     clear_console()
@@ -168,18 +177,16 @@ def launch_cutscene(data):
         "\n              |_________________________________________________________________|"))
 
     print(f"\n{incognito} : « Avez-vous lu et acceptez-vous ce contrat » ")
-    agreement = str(input(" > ")).strip()
+    agreement = str(input(" > ")).strip().lower()
 
-    while agreement.lower() != "oui" and agreement.lower() != "non":
+    while agreement != "oui" and agreement != "non":
         print(f"\n{incognito} : « Nous réitérons notre demande... »")
         print(f"{incognito} : « Acceptez-vous ce contrat » (oui/non)")
         play_sound("hmm")
-        agreement = str(input(" > ")).strip()
+        agreement = str(input(" > ")).strip().lower()
 
     if agreement.lower() == "non":
-        pseudo = str(input("\nPseudo > \033[1;36m")).strip()
-        if pseudo == "":
-            pseudo = "Vous"
+        pseudo = clean_nick(input("\nPseudo > \033[1;36m"))
         data["player"]["nickname"] = pseudo
 
         print(f"\n{player_speaks(pseudo)} : « Va te faire foutre. »")
@@ -190,10 +197,8 @@ def launch_cutscene(data):
         return False
 
     else:
-        pseudo = str(input("\nSignature (pseudo) > \033[1;36m")).strip()
+        pseudo = clean_nick(input("\nSignature (pseudo) > \033[1;36m"))
         play_sound("handwriting")
-        if pseudo == "":
-            pseudo = "Vous"
         data["player"]["nickname"] = pseudo
 
         slow_print((
@@ -234,8 +239,8 @@ def launch_starters_scene(data):
     starters.remove(weapon_slot_3)
     play_sound("bell")
 
-    slow_print((f"\n{incognito} : « Ce dernier objet est un sac dans lequel tu devras mettre tes trouvailles »",
-               f"{incognito} : « Tu n'es pas le premier à t'en servir c'est pour ça qu'il est miteux »"))
+    slow_print((f"\n{incognito} : « Je te donne un dernier objet : un sac dans lequel tu devras mettre tes trouvailles »",
+               f"{incognito} : « Tu n'es pas le premier à t'en servir c'est pour ça qu'il y a quelques déchets dedans »"))
     play_sound("bell")
     data["player"]["objects_inv"] =  {"object_slot_1":{"name": OBJ_STARTER.name, "effect": OBJ_STARTER.effect, "value": OBJ_STARTER.value}}
 
@@ -254,6 +259,7 @@ def launch_starters_scene(data):
     data["player"]["pv"] = data["player"]["max_pv"] = 100
     data["player"]["stim"] = 300
     data["player"]["max_stim"] = 500
+    data["player"]["mana"] = data["player"]["max_mana"] = 30
 
     stop_sound(2000)
 
@@ -262,7 +268,7 @@ def launch_starters_scene(data):
 
 def launch_tuto_fight(player):
     tuto_enemy = Monster("Enemy gez", 200, Weapon("Arme éclaté", 20, 0, 0), 1)
-    result = Fight(player, tuto_enemy).fight_loop()
+    result = Fight(player, tuto_enemy, 0).fight_loop()
     return result
 
 def launch_keep_fighting(difficulty, player, used_monsters):
@@ -290,9 +296,10 @@ def launch_keep_fighting(difficulty, player, used_monsters):
     # FAIRE DES RANDOMS WEAKNESSES !!!!!!!!!!!!!
 
     player.max_pv = int(100*1.1**difficulty)
-    player.pv = int(min(player.pv, player.max_pv)) # Mettre int a corrigé qqch, jsp quoi
+    player.pv = player.max_pv
+    player.mana = player.max_mana
 
-    result = Fight(player, new_enemy).fight_loop()
+    result = Fight(player, new_enemy, difficulty).fight_loop()
 
     if result is True:
         if len(player.inventory) >= MAX_INV_SIZE:

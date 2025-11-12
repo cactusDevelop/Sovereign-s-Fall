@@ -6,6 +6,7 @@ WEAPON_MIN_MANA = 3
 WEAPON_MAX_MANA = 5
 NAME_MIN_LETTER = 4
 NAME_MAX_LETTER = 7
+GEN_ATTEMPTS = 111
 
 starters_list = []
 
@@ -25,7 +26,7 @@ def rand_names():
     n = choice(alphabet).upper()
     for _ in range(x-1):
         n += (choice(alphabet))
-    if n != "GILIS":
+    if n != "GILIS": # Trouver la seed qui génère cette pépite
         return n
     else:
         return "ISA-LIBUR"
@@ -49,10 +50,40 @@ def gen_op():
 
 def generate_starters():
     starter_list = []
-    for _ in range(NUM_CLASSIC_STARTER):
-        starter_list.append(gen_classic())
-    for _ in range(NUM_OP_STARTER):
-        starter_list.append(gen_op())
+    already_used_stats = set()
+
+    attempt = 0
+    while len(starter_list) < NUM_CLASSIC_STARTER and GEN_ATTEMPTS > attempt :
+        weapon = gen_classic()
+        if weapon not in already_used_stats:
+            starter_list.append(weapon)
+            already_used_stats.add(weapon)
+        attempt += 1
+
+    attempt = 0
+    approved = True
+    while len(starter_list) < (NUM_CLASSIC_STARTER+NUM_OP_STARTER) and GEN_ATTEMPTS > attempt :
+        op_weapon = gen_op()
+        for classic_weapon in starter_list:
+            if ((op_weapon.power == classic_weapon.power + 10 and
+                op_weapon.stim == classic_weapon.stim and
+                op_weapon.mana == classic_weapon.mana) or
+                (op_weapon.power == classic_weapon.power and
+                op_weapon.stim == classic_weapon.stim +10 and
+                op_weapon.mana == classic_weapon.mana)):
+                approved = False
+                break
+
+        if op_weapon not in already_used_stats and approved:
+            starter_list.append(op_weapon)
+            already_used_stats.add(op_weapon)
+        attempt += 1
+
+    while len(starter_list) < (NUM_CLASSIC_STARTER + NUM_OP_STARTER):
+        if len(starter_list) < NUM_CLASSIC_STARTER:
+            starter_list.append(gen_classic())
+        else:
+            starter_list.append(gen_op()) # Dernière chance
 
     shuffle(starter_list)
     return starter_list

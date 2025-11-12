@@ -1,6 +1,11 @@
 {
-    "highscore": 1200,
+    "highscore": 1560,
     "history": [
+        {
+            "nickname": "Ez",
+            "score": 1560,
+            "level": 13
+        },
         {
             "nickname": "Alexxx",
             "score": 1200,
@@ -12,7 +17,7 @@
             "level": 4
         },
         {
-            "nickname": "azerttrezertyuytrertyuytrertyuytrertyuytrertyuytrezertytreze",
+            "nickname": "azerttrezertyuytrert",
             "score": 220,
             "level": 4
         },
@@ -43,11 +48,6 @@
         },
         {
             "nickname": "Garulfo",
-            "score": 100,
-            "level": 1
-        },
-        {
-            "nickname": "Vous",
             "score": 100,
             "level": 1
         }

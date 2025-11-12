@@ -1,10 +1,14 @@
 
 import os, time
+import random
+
 from musics import play_sound, stop_sound
 
 
 MAX_NAV_ITERATIONS = 30
 FADE_OUT = 3500 #ms
+MAX_ANALYSIS = 10
+MISS_CHANCE = 0.05
 
 def clear_console():
     if os.name == "nt":
@@ -21,11 +25,13 @@ def get_width(): # La fct était déjà dans scenes.py mais je ne vx pas d'impor
 
 
 class Fight:
-    def __init__(self, player, enemy):
+    def __init__(self, player, enemy, level=1):
         self.player = player
         self.enemy = enemy
         self.turn_count = 0
         self.weakness_turns_remaining = 0
+        self.analysis_count = MAX_ANALYSIS
+        self.level = level
 
 
     def fight_loop(self):
@@ -79,11 +85,20 @@ class Fight:
     def player_turn(self):
         print("\n" + "=" * 5 + "| \033[1;36m" + self.player.name + "'s turn" + "\033[0m |" + "=" * 15)
 
+        self.player.mana_charge(1)
+
         instruction, value = self.nav(self.player)
 
         if instruction == "Weapons":
             equiped_w = self.player.weapons[value]
             self.player.weapon = equiped_w
+
+            if self.player.mana < equiped_w.mana:
+                print(f"Mana insuffisant {self.player.mana}/{equiped_w.mana}")
+                input()
+                return None
+
+            self.player.mana -= equiped_w.mana
 
             self.player.attack(self.enemy) # Parce qu'on a décidé d'attaquer dès le choix de l'arme
             self.player.charge(self.player.weapon.stim)
@@ -98,7 +113,14 @@ class Fight:
                 return None
 
         elif instruction == "Analysis":
-            print("Point faible adverse : " + self.find_weakness())
+            if self.analysis_count <= 0:
+                print("T'as trop spam la passivité mon gars")
+                input()
+                return None
+
+            self.analysis_count-=1
+
+            print(f"Point faible adverse : {self.find_weakness()}")
             return "Ana"
 
         elif instruction == "Ultime":
@@ -116,10 +138,15 @@ class Fight:
     def enemy_turn(self): # ENEMY IA PLS
         clear_console()
         print("\n"+"="*5+"| \033[31m"+self.enemy.name+"'s turn"+"\033[0m |"+"="*15)
-        self.enemy.attack(self.player)
-        play_sound("monster-attack")
-        self.display_status()
 
+        if random.random() < MISS_CHANCE:
+            play_sound("miss-swing")
+            print(f"{self.enemy.name} rate lamentablement son attaque")
+        else:
+            self.enemy.attack(self.player)
+            play_sound("monster-attack")
+
+        self.display_status()
         input()
 
 
@@ -128,9 +155,11 @@ class Fight:
         if self.enemy.pv <= 0:
             print("\n VICTOIRE !!!")
             return True
+
         elif self.player.pv <= 0:
             print("\n Votre corps ne vous répond plus")
             return False
+
         return None
 
 
@@ -140,6 +169,7 @@ class Fight:
         e_pv_ratio = self.enemy.pv * 10 // self.enemy.max_pv
         left_offset = 2
 
+        line_0 = f" NIVEAU {self.level}"
         line_1 = " "*left_offset + self.player.name.upper() + " "*(get_width()//2-len(self.player.name))
         line_1 += self.enemy.name.upper()
         line_2 = " "*left_offset + "█"*p_pv_ratio + "_"*(10-p_pv_ratio) + " | " + str(self.player.pv) + "/" + str(self.player.max_pv) +" PV"
@@ -150,6 +180,7 @@ class Fight:
         line_3 = " "*left_offset + "█"*p_stim_ratio + "_"*(10-p_stim_ratio) + " | " + str(self.player.stim) + "/" + str(self.player.max_stim) +" ULT"
 
 
+        print(line_0)
         print()
         print(line_1)
         print(line_2)
@@ -189,7 +220,10 @@ class Fight:
             if current_pos == "Nav":
                 print("=" * 10 + "Menu" + "=" * 10)
                 for i, option in enumerate(nav_menu):
-                    print(f"[{i+1}] {option}")
+                    if option == "Analysis":
+                        print(f"[{i + 1}] {option} ({self.analysis_count})")
+                    else:
+                        print(f"[{i+1}] {option}")
 
                 action = nav_def(nav_menu)
                 current_pos = nav_menu[action]
@@ -209,11 +243,12 @@ class Fight:
             elif current_pos == "Objects":
                 print("=" * 10 + "Objects" + "=" * 10)
                 for i, option in enumerate(player.inventory):
-                    effet = "Objet généré aléatoirement" if option.effect == "new_obj" \
-                        else "Soin" if option.effect == "heal" \
-                        else "Arme améliorée" if option.effect == "att_boost" \
+                    effect = "Objet généré aléatoirement" if option.effect == "new_obj" \
+                        else f"Soin de {option.value} PV" if option.effect == "heal" \
+                        else f"Arme améliorée de {option.value} Att" if option.effect == "att_boost" \
+                        else f"Bouclier de {option.value} PV" if option.effect == "shield" \
                         else "[DEBUG] Effet défaillant"
-                    print(f"[{i+1}] {option.name} (Effet: {option.effect} {option.value})")
+                    print(f"[{i+1}] {option.name} (Effet: {effect})")
                 print(f"[{len(player.inventory) + 1}] Retour")
 
                 action = nav_wea_obj(player.inventory)
