@@ -1,0 +1,39 @@
+{
+    "player": {
+        "nickname": "Testdev",
+        "pv": 100,
+        "max_pv": 100,
+        "stim": 300,
+        "max_stim": 500,
+        "current_level": 1,
+        "score": 0,
+        "weapons_inv": {
+            "weapon_slot_1": {
+                "name": "Mrrmab",
+                "power": 140,
+                "stim": 0,
+                "mana": 3
+            },
+            "weapon_slot_2": {
+                "name": "Scnns",
+                "power": 100,
+                "stim": 30,
+                "mana": 3
+            },
+            "weapon_slot_3": {
+                "name": "Ilre",
+                "power": 100,
+                "stim": 50,
+                "mana": 5
+            }
+        },
+        "objects_inv": {
+            "object_slot_1": {
+                "name": "Sac des abimes",
+                "effect": "new_obj",
+                "value": 0
+            }
+        }
+    },
+    "used_monsters": []
+}

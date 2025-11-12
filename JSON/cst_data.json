@@ -1,0 +1,38 @@
+{
+  "monster_names": [
+    "Dimitri",
+    "Le reuf de Dimitri",
+    "La grd-mère de Dimitri",
+    "Dimitri la Perdrix",
+    "Haelterman la Banane",
+    "Papy Kenny",
+    "Ken Hasselmanette",
+    "Ken le survivant",
+    "Fred de la ville de Waterloo",
+    "Kennus Latinus",
+    "Alexandri Sauvage",
+    "Thomas Sauvage",
+    "Thom-arabe",
+    "Boegart Hangar",
+    "Loulou Croix-V-Baton",
+    "Louis VII",
+    "Louis IIV"
+  ],
+  "weapon_names": [
+    "Tram Louise |8|",
+    "Tablette du Janson",
+    "Caleçon Star Wars de Ken",
+    "Caleçon Star Trek de Ken",
+    "Eduroam",
+    "Gros Labo dans ta gueule",
+    "Examen ISA"
+  ],
+  "object_blueprints": [
+    ["Petite popo de soin", "heal", 30, 60],
+    ["Grande popo de soin", "heal", 60, 120],
+    ["Buff instant", "att_boost", 20, 40],
+    ["Buff divin", "att_boost", 40, 80],
+    ["P'tit bouclier", "shield", 20, 40],
+    ["Ama-no-Iwato", "shield", 40, 80]
+  ]
+}
