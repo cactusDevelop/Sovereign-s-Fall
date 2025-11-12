@@ -1,1 +1,8 @@
 config.json
+
+# Sauvegardes locales
+JSON/active_data.json
+JSON/highscores.json
+
+# Python
+__pycache__/
