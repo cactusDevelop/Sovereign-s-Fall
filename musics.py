@@ -24,7 +24,6 @@ def play_sound(which, is_bg=False):
         pygame.mixer.music.load(f"MUSICS/{which}.mp3")
         pygame.mixer.music.play(loops=-1)
         pygame.mixer.music.set_volume(0.15)
-        print("[DEBUG] Music Volume : "+str(pygame.mixer.music.get_volume()))
     else:
         for _ in os.listdir("SFX"):
             if _.startswith(which) and _.endswith(".mp3"):

@@ -1,6 +1,21 @@
-# ATTENTION : Code généré par IA, l'unique but de ce fichier est de rendre le jeu plus agréable aux beta-testeurs
-#             En aucun cas, ce fichier ne fait parti de l'évaluation.
-
+#  ____________________
+# /                    \
+# !     ATTENTION      !
+# !                    !
+# \____________________/
+#          !  !
+#          !  !               Code généré par IA, l'unique but de ce fichier
+#          L_ !               est de rendre le jeu plus agréable aux beta-testeurs
+#         / _)!               En aucun cas, ce fichier ne fait parti de l'évaluation.
+#        / /__L
+#  _____/ (____)              cfr [BALISE ONLINE HIGHSCORES] pour code associé
+#         (____)
+#  _____  (____)
+#       \_(____)
+#          !  !
+#          !  !
+#          \__/
+#
 
 
 """
@@ -75,7 +90,6 @@ class OnlineHighscores:
                 self.last_sha = data['sha']
                 content = base64.b64decode(data['content']).decode('utf-8')
                 self.local_cache = json.loads(content)
-                print("[INFO] Scores en ligne récupérés !")
                 return self.local_cache
             elif response.status_code == 404:
                 print("[INFO] Création du fichier de scores en ligne...")

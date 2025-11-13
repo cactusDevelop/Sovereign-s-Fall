@@ -2,6 +2,7 @@
 import os, time
 import random
 
+from global_func import solid_input
 from musics import play_sound, stop_sound
 
 
@@ -83,8 +84,6 @@ class Fight:
 
 
     def player_turn(self):
-        print("\n" + "=" * 5 + "| \033[1;36m" + self.player.name + "'s turn" + "\033[0m |" + "=" * 15)
-
         self.player.mana_charge(1)
 
         instruction, value = self.nav(self.player)
@@ -214,45 +213,59 @@ class Fight:
 
         for it in range(MAX_NAV_ITERATIONS):
             clear_console()
-            self.display_status()
-
 
             if current_pos == "Nav":
-                print("=" * 10 + "Menu" + "=" * 10)
-                for i, option in enumerate(nav_menu):
-                    if option == "Analysis":
-                        print(f"[{i + 1}] {option} ({self.analysis_count})")
-                    else:
-                        print(f"[{i+1}] {option}")
+                def to_display():
+                    print("\n" + "=" * 5 + "| \033[1;36m" + self.player.name + "'s turn" + "\033[0m |" + "=" * 15)
 
-                action = nav_def(nav_menu)
+                    self.display_status()
+                    print("=" * 10 + "Menu" + "=" * 10)
+                    for i, option in enumerate(nav_menu):
+                        if option == "Analysis":
+                            print(f"[{i + 1}] {option} ({self.analysis_count})")
+                        else:
+                            print(f"[{i+1}] {option}")
+                def conf(action_input):
+                    return action_input.isdigit() and 0 < int(action_input) <= len(nav_menu)
+
+                action = int(solid_input(conf,to_display))-1
                 current_pos = nav_menu[action]
 
             elif current_pos == "Weapons":
-                print("="*10 + "Weapons" + "="*10)
-                for i, option in enumerate(player.weapons):
-                    print(f"[{i+1}] {option.name} (Att:{option.power}, Stim:{option.stim}, Mana:{option.mana})")
-                print(f"[{len(player.weapons)+1}] Retour")
+                def to_display():
+                    self.display_status()
+                    print("="*10 + "Weapons" + "="*10)
+                    for i, option in enumerate(player.weapons):
+                        print(f"[{i+1}] {option.name} (Att:{option.power}, Stim:{option.stim}, Mana:{option.mana})")
+                    print(f"[{len(player.weapons)+1}] Retour")
+                def conf(action_input):
+                    return action_input.isdigit() and 0 < int(action_input) <= len(player.weapons)+1
 
-                action = nav_wea_obj(player.weapons)
-                if action < 0:
+                action = int(solid_input(conf, to_display))-1
+
+                if action == len(player.weapons):
                     current_pos = "Nav"
                 else:
                     return "Weapons", action
 
             elif current_pos == "Objects":
-                print("=" * 10 + "Objects" + "=" * 10)
-                for i, option in enumerate(player.inventory):
-                    effect = "Objet généré aléatoirement" if option.effect == "new_obj" \
-                        else f"Soin de {option.value} PV" if option.effect == "heal" \
-                        else f"Arme améliorée de {option.value} Att" if option.effect == "att_boost" \
-                        else f"Bouclier de {option.value} PV" if option.effect == "shield" \
-                        else "[DEBUG] Effet défaillant"
-                    print(f"[{i+1}] {option.name} (Effet: {effect})")
-                print(f"[{len(player.inventory) + 1}] Retour")
+                def to_display():
+                    self.display_status()
+                    print("=" * 10 + "Objects" + "=" * 10)
+                    for i, option in enumerate(player.inventory):
+                        effect = "Objet généré aléatoirement" if option.effect == "new_obj" \
+                            else f"Soin de {option.value} PV" if option.effect == "heal" \
+                            else f"Arme améliorée de {option.value} Att" if option.effect == "att_boost" \
+                            else f"Bouclier de {option.value} PV" if option.effect == "shield" \
+                            else "[DEBUG] Effet défaillant"
+                        print(f"[{i+1}] {option.name} (Effet: {effect})")
+                    print(f"[{len(player.inventory) + 1}] Retour")
+                def conf(action_input):
+                    return action_input.isdigit() and 0 < int(action_input) <= len(player.inventory)+1
 
-                action = nav_wea_obj(player.inventory)
-                if action < 0:
+                action = int(solid_input(conf, to_display))-1
+
+                if action == len(player.inventory):
                     current_pos = "Nav"
                 else:
                     return "Objects", action
@@ -266,19 +279,3 @@ class Fight:
         print("Arrête de naviguer sans rien faire, reviens quand tu sauras prendre des décisions")
         return "sus", None # Au cas où un con naviguerait 1000 fois sans jouer
 
-def nav_def(nav_s):
-    x = input(" > ")
-    while not (x.isdigit() and 0 < int(x) <= len(nav_s)): # ² ³ détruisent tt
-        print("Valeur invalide")
-        x = input(" > ")
-    return int(x)-1
-
-def nav_wea_obj(items):
-    x = input(" > ")
-    while not (x.isdigit() and 0 < int(x) <= (len(items)+1)):
-        print("Valeur invalide")
-        x = input(" > ")
-    if int(x) == (len(items)+1):
-        return -1
-    else:
-        return int(x)-1

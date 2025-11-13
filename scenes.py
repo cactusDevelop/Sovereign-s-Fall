@@ -1,5 +1,5 @@
 
-import os, random, time
+import random, time
 
 from json_manager import get_cst_names, save_hs, clear_save
 from weapon import generate_starters
@@ -8,8 +8,9 @@ from characters import Monster
 from weapon import Weapon
 from object import Object, enemy_loot, MAX_INV_SIZE
 from fight import Fight
+from global_func import *
 
-from online_highscores import save_score_with_fallback, get_online_leaderboard, get_online_highscore
+from online_highscores_hors_projet import save_score_with_fallback
 
 
 # from getpass import getpass   Ca marche pas ses grands morts
@@ -17,6 +18,8 @@ from online_highscores import save_score_with_fallback, get_online_leaderboard, 
 incognito = " \033[1;32m???\033[0m"
 starters = generate_starters()
 OBJ_STARTER = Object("Sac des abimes", "new_obj", 0)
+MONSTER_SCALE = 1.2
+PLAYER_SCALE = 1.15
 
 def get_width():
     try:
@@ -40,23 +43,18 @@ def slow_print(txt: tuple):
         input()
 
 def choose_starter(s_list):
-    print()
-    for j in s_list:
-        print(f"[{starters.index(j) + 1}] {j.name}: Power {j.power}, Ult Charge {j.stim}, Mana {j.mana}")
-    choice = input(" > ")
-    while not (choice.isdigit() and 0 < int(choice) <= len(s_list)):
-        print("Valeur invalide")
-        choice = input(" > ")
-    return s_list[int(choice) - 1]
+    def to_display():
+        print()
+        for j in s_list:
+            print(f"[{starters.index(j) + 1}] {j.name}: Power {j.power}, Ult Charge {j.stim}, Mana {j.mana}")
+    def conf(action_input):
+        return action_input.isdigit() and 0 < int(action_input) <= len(s_list)
+
+    choice = solid_input(conf, to_display)
+    return s_list[int(choice)-1]
 
 def player_speaks(pseudo):
     return f" \033[1;36m{pseudo}\033[0m"
-
-def clear_console():
-    if os.name == "nt":
-        os.system("cls")
-    else:
-        os.system("clear")
 
 def game_over(data,x:int,des:str):
     clear_console()
@@ -68,7 +66,7 @@ def game_over(data,x:int,des:str):
 
     test_high = False
     if score > 0:
-        new_hs = save_score_with_fallback(nickname, score, level, save_hs)
+        new_hs = save_score_with_fallback(nickname, score, level, save_hs) # [BALISE ONLINE HIGHSCORES]
         test_high = (score == new_hs)
 
     print("\n\x1b[7m" + "=" * get_width())
@@ -151,7 +149,7 @@ def launch_cutscene(data):
         "\n   |     |/       | |     | |     ||      | |    |||      | |    ||                            "
         "\n   |_____|         \|_____|\|_____||______|/|____|/|______|/|____|/                            "
         "\n\033[0m"))
-    input()
+    time.sleep(1)
     clear_console()
     play_sound("wood-creak")
     slow_print((
@@ -179,13 +177,17 @@ def launch_cutscene(data):
         "\n              |_________________________________________________________________|"))
 
     print(f"\n{incognito} : « Avez-vous lu et acceptez-vous ce contrat » ")
-    agreement = str(input(" > ")).strip().lower()
 
-    while agreement != "oui" and agreement != "non":
+    def to_display():
         print(f"\n{incognito} : « Nous réitérons notre demande... »")
         print(f"{incognito} : « Acceptez-vous ce contrat » (oui/non)")
         play_sound("hmm")
-        agreement = str(input(" > ")).strip().lower()
+    def conf(action_input):
+        return action_input.lower() in ["oui", "non"]
+
+    agreement = input(" > ").strip().lower()
+    if agreement != "oui" and agreement != "non":
+        agreement = solid_input(conf,to_display)
 
     if agreement.lower() == "non":
         pseudo = clean_nick(input("\nPseudo > \033[1;36m"))
@@ -290,14 +292,14 @@ def launch_keep_fighting(difficulty, player, used_monsters):
 
     new_enemy_name = random.choice(available_enemies)
     used_monsters.append(new_enemy_name)
-    new_enemy_pv = int(200*1.2**difficulty)
+    new_enemy_pv = int(200*MONSTER_SCALE**difficulty)
     new_weapon_name = random.choice(WEAPON_NAMES)
-    new_weapon_power = int(10*1.2**difficulty)
+    new_weapon_power = int(10*MONSTER_SCALE**difficulty)
 
     new_enemy = Monster(new_enemy_name, new_enemy_pv, Weapon(new_weapon_name, new_weapon_power, 0, 0), 1)
     # FAIRE DES RANDOMS WEAKNESSES !!!!!!!!!!!!!
 
-    player.max_pv = int(100*1.1**difficulty)
+    player.max_pv = int(100*MONSTER_SCALE**difficulty)
     player.pv = player.max_pv
     player.mana = player.max_mana
 

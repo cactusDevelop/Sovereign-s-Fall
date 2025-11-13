@@ -3,6 +3,8 @@ from random import choice, randint
 
 import json
 
+from global_func import solid_input
+
 with open("JSON/cst_data.json", "r", encoding="utf-8") as read_file:
     cst_data = json.load(read_file)
     OBJECT_BLUEPRINTS = cst_data.get("object_blueprints", [])
@@ -31,14 +33,14 @@ class Object:
             print(f"{self.name} régénère {delta_pv} PV")
 
         elif self.effect == "att_boost":
-            print("\n" + "="*10 + "Arme à améliorer" + "="*10)
-            for i, weapon in enumerate(player.weapons):
-                print(f"[{i+1}] {weapon.name} (Att: {weapon.power})")
+            def to_display():
+                print("\n" + "="*10 + "Arme à améliorer" + "="*10)
+                for i, weapon in enumerate(player.weapons):
+                    print(f"[{i+1}] {weapon.name} (Att: {weapon.power})")
+            def conf(action_input):
+                return action_input.isdigit() and 0 < int(which_one) <= len(player.weapons)
 
-            which_one = input(" > ")
-            while not (which_one.isdigit() and 0 < int(which_one) <= len(player.weapons)):
-                print("Valeur invalide")
-                which_one = input(" > ")
+            which_one = solid_input(conf, to_display)
 
             player.weapons[int(which_one)-1].power += self.value
             print(f"{self.name} augmente la puissance de {player.weapons[int(which_one)-1]} de {self.value}")

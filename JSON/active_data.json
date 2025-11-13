@@ -1,59 +1,39 @@
 {
     "player": {
-        "nickname": null,
-        "pv": null,
-        "max_pv": null,
-        "stim": null,
-        "max_stim": null,
-        "mana": null,
-        "max_mana": null,
-        "current_level": null,
-        "score": null,
+        "nickname": "Dev",
+        "pv": 100,
+        "max_pv": 100,
+        "stim": 300,
+        "max_stim": 500,
+        "mana": 30,
+        "max_mana": 30,
+        "current_level": 0,
+        "score": 0,
         "weapons_inv": {
             "weapon_slot_1": {
-                "name": null,
-                "power": null,
-                "stim": null,
-                "mana": null
+                "name": "Eljy",
+                "power": 140,
+                "stim": 0,
+                "mana": 4
             },
             "weapon_slot_2": {
-                "name": null,
-                "power": null,
-                "stim": null,
-                "mana": null
+                "name": "Laaimsi",
+                "power": 120,
+                "stim": 20,
+                "mana": 4
             },
             "weapon_slot_3": {
-                "name": null,
-                "power": null,
-                "stim": null,
-                "mana": null
+                "name": "Yysie",
+                "power": 130,
+                "stim": 0,
+                "mana": 3
             }
         },
         "objects_inv": {
             "object_slot_1": {
-                "name": null,
-                "effect": null,
-                "value": null
-            },
-            "object_slot_2": {
-                "name": null,
-                "effect": null,
-                "value": null
-            },
-            "object_slot_3": {
-                "name": null,
-                "effect": null,
-                "value": null
-            },
-            "object_slot_4": {
-                "name": null,
-                "effect": null,
-                "value": null
-            },
-            "object_slot_5": {
-                "name": null,
-                "effect": null,
-                "value": null
+                "name": "Sac des abimes",
+                "effect": "new_obj",
+                "value": 0
             }
         }
     },
