@@ -7,8 +7,13 @@
             "level": 17
         },
         {
+            "nickname": "Martino",
+            "score": 2500,
+            "level": 16
+        },
+        {
             "nickname": "Ez",
-            "score": 1560,
+            "score": 1660,
             "level": 13
         },
         {
@@ -40,11 +45,6 @@
             "nickname": "Adr",
             "score": 160,
             "level": 3
-        },
-        {
-            "nickname": "Vous",
-            "score": 100,
-            "level": 1
         },
         {
             "nickname": "Vous",
