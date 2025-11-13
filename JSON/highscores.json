@@ -2,6 +2,11 @@
     "highscore": 1560,
     "history": [
         {
+            "nickname": "Zizi",
+            "score": 2820,
+            "level": 17
+        },
+        {
             "nickname": "Ez",
             "score": 1560,
             "level": 13
@@ -45,11 +50,6 @@
             "nickname": "Vous",
             "score": 100,
             "level": 1
-        },
-        {
-            "nickname": "Zahoe",
-            "score": 2820,
-            "level": 17
         }
     ]
 }
