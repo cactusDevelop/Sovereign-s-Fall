@@ -1,32 +1,35 @@
 {
     "player": {
-        "nickname": "Dev",
+        "nickname": "Ps",
         "pv": 100,
         "max_pv": 100,
         "stim": 300,
         "max_stim": 500,
-        "mana": 30,
-        "max_mana": 30,
+        "mana": 20,
+        "max_mana": 20,
         "current_level": 0,
         "score": 0,
         "weapons_inv": {
             "weapon_slot_1": {
-                "name": "Eljy",
-                "power": 140,
-                "stim": 0,
-                "mana": 4
+                "name": "Aeaydk",
+                "power": 80,
+                "stim": 70,
+                "mana": 4,
+                "buff_count": 0
             },
             "weapon_slot_2": {
-                "name": "Laaimsi",
-                "power": 120,
-                "stim": 20,
-                "mana": 4
+                "name": "Ytue",
+                "power": 70,
+                "stim": 80,
+                "mana": 5,
+                "buff_count": 0
             },
             "weapon_slot_3": {
-                "name": "Yysie",
-                "power": 130,
-                "stim": 0,
-                "mana": 3
+                "name": "Tarysep",
+                "power": 70,
+                "stim": 60,
+                "mana": 3,
+                "buff_count": 0
             }
         },
         "objects_inv": {
@@ -37,5 +40,6 @@
             }
         }
     },
-    "used_monsters": []
+    "used_monsters": [],
+    "cheat": null
 }

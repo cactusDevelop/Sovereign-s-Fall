@@ -46,7 +46,8 @@ def save_game(new_player, level=1, used_monsters=None):
             "name": weapon.name,
             "power": weapon.power,
             "stim": weapon.stim,
-            "mana": weapon.mana
+            "mana": weapon.mana,
+            "buff_count": weapon.buff_count
         }
 
     data["player"]["objects_inv"].clear()
@@ -104,7 +105,8 @@ def get_player_data():
         b = data["player"]["weapons_inv"][i]["power"]
         c = data["player"]["weapons_inv"][i]["stim"]
         d = data["player"]["weapons_inv"][i]["mana"]
-        weapons_inventory.append(Weapon(a, b, c, d))
+        e = data["player"]["weapons_inv"][i].get("buff_count", 0)
+        weapons_inventory.append(Weapon(a, b, c, d, e))
 
     objects_inventory = [] # A faire plus tard
     for i in data["player"]["objects_inv"].keys():

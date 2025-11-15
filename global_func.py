@@ -19,3 +19,10 @@ def solid_input(conf, to_display):
         action_input = input(" > ").strip()
 
     return action_input
+
+def get_width():
+    try:
+        columns = os.get_terminal_size().columns
+    except OSError:
+        columns = 80
+    return columns

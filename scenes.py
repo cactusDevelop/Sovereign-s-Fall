@@ -16,17 +16,13 @@ from online_highscores_hors_projet import save_score_with_fallback
 # from getpass import getpass   Ca marche pas ses grands morts
 
 incognito = " \033[1;32m???\033[0m"
-starters = generate_starters()
+#starters = generate_starters() A cause de random.seed()
 OBJ_STARTER = Object("Sac des abimes", "new_obj", 0)
-MONSTER_SCALE = 1.2
 PLAYER_SCALE = 1.15
+MONSTER_SCALE = 1.2
+BOSS_SCALE = 1.3
+CHEAT_WEAPON = Weapon("Mange tes morts", 999, 999, 0, 0)
 
-def get_width():
-    try:
-        columns = os.get_terminal_size().columns
-    except OSError:
-        columns = 80
-    return columns
 
 MAX_NAME_SIZE = get_width()//3
 def clean_nick(nickname):
@@ -44,9 +40,9 @@ def slow_print(txt: tuple):
 
 def choose_starter(s_list):
     def to_display():
-        print()
+        left_offset = 8
         for j in s_list:
-            print(f"[{starters.index(j) + 1}] {j.name}: Power {j.power}, Ult Charge {j.stim}, Mana {j.mana}")
+            print(f"[{s_list.index(j) + 1}] {j.name}:" + " "*(left_offset-len(j.name)) + f"Power {j.power}, Ult Charge {j.stim}, Mana {j.mana}")
     def conf(action_input):
         return action_input.isdigit() and 0 < int(action_input) <= len(s_list)
 
@@ -157,26 +153,30 @@ def launch_cutscene(data):
         "Un homme tout de noir vêtu vous tend un parchemin.",
         f"\n{incognito} : « Complétez ceci »"))
     play_sound("paper-collect")
-    slow_print((
+    print(
         "\n               _________________________________________________________________"
         "\n              |                                                                 |"
         "\n              |                                                                 |"
         "\n              |   Vous avez eu l’exceptionnellement incroyable chance           |"
         "\n              |   d’être sélectionné pour prendre part au programme *XXXXX*.    |"
-        "\n              |                                                                 |",
-        "              |                                                                 |"
+        "\n              |                                                                 |")
+    input()
+    play_sound("paper-rustle")
+    print("              |                                                                 |"
         "\n              |   - Toute atteinte à la sécurité du participant durant le       |"
         "\n              |   programme relève de son entière responsabilité.               |"
         "\n              |   - Le participant n’est pas autorisé à interrompre le          |"
-        "\n              |   programme avant la fin.                                       |",
-        "              |                                                                 |"
+        "\n              |   programme avant la fin.                                       |")
+    input()
+    play_sound("paper-rustle")
+    print("              |                                                                 |"
         "\n              |   Je soussigné (nom, prénom)...............................     |"
         "\n              |   accepte en toute connaissance de cause, les conditions        |"
         "\n              |   présentée cfr supra.                                          |"
         "\n              |                                                                 |"
-        "\n              |_________________________________________________________________|"))
+        "\n              |_________________________________________________________________|")
 
-    print(f"\n{incognito} : « Avez-vous lu et acceptez-vous ce contrat » ")
+    print(f"\n{incognito} : « Avez-vous lu et accepté ce contrat » ")
 
     def to_display():
         print(f"\n{incognito} : « Nous réitérons notre demande... »")
@@ -203,6 +203,7 @@ def launch_cutscene(data):
     else:
         pseudo = clean_nick(input("\nSignature (pseudo) > \033[1;36m"))
         play_sound("handwriting")
+        play_sound("door-shut")
         data["player"]["nickname"] = pseudo
 
         slow_print((
@@ -219,6 +220,7 @@ def launch_cutscene(data):
 
 def launch_starters_scene(data):
     clear_console()
+    starters = generate_starters()
     nickname = data["player"]["nickname"]
 
     slow_print((
@@ -229,16 +231,20 @@ def launch_starters_scene(data):
                 f"{incognito} : « Faites vos preuves et vous deviendrez un héros national »",
                 f"{incognito} : « Choisissez une arme. »"))
 
+    print()
     weapon_slot_1 = choose_starter(starters)
     starters.remove(weapon_slot_1)
     play_sound("bell")
 
-    print(f"\n{incognito} : « Ah, j'ai oublié de préciser que vous pourrez faire une attaque combinée... si vous êtes à la hauteur ? »")
+    slow_print((f"\n{incognito} : « Ah, j'ai oublié de préciser que vous pourrez faire une attaque combinée... »",
+                f"{incognito} : « Donc vous aurez besoin deux autres armes en plus. »"))
 
+    print("\n <2e arme>")
     weapon_slot_2 = choose_starter(starters)
     starters.remove(weapon_slot_2)
     play_sound("bell")
 
+    print("\n <3e arme>")
     weapon_slot_3 = choose_starter(starters)
     starters.remove(weapon_slot_3)
     play_sound("bell")
@@ -249,6 +255,12 @@ def launch_starters_scene(data):
     data["player"]["objects_inv"] =  {"object_slot_1":{"name": OBJ_STARTER.name, "effect": OBJ_STARTER.effect, "value": OBJ_STARTER.value}}
 
     selected_weapons = [weapon_slot_1,weapon_slot_2,weapon_slot_3]
+
+    if data.get("cheat", False):
+        print(f"\n{incognito} : « Tiens tiens tiens... tu as triché ? Bah tiens chacal »")
+        input()
+        selected_weapons.append(CHEAT_WEAPON)
+        play_sound("bell")
 
     for n, weapon in enumerate(selected_weapons):
         data["player"]["weapons_inv"][f"weapon_slot_{n+1}"]={
@@ -263,7 +275,7 @@ def launch_starters_scene(data):
     data["player"]["pv"] = data["player"]["max_pv"] = 100
     data["player"]["stim"] = 300
     data["player"]["max_stim"] = 500
-    data["player"]["mana"] = data["player"]["max_mana"] = 30
+    data["player"]["mana"] = data["player"]["max_mana"] = 20
 
     stop_sound(2000)
 
@@ -271,7 +283,7 @@ def launch_starters_scene(data):
     input()
 
 def launch_tuto_fight(player):
-    tuto_enemy = Monster("Enemy gez", 200, Weapon("Arme éclaté", 20, 0, 0), 1)
+    tuto_enemy = Monster("Enemy gez", 200, Weapon("Arme éclaté", 20, 0, 0, 0), 1)
     result = Fight(player, tuto_enemy, 0).fight_loop()
     return result
 
@@ -279,7 +291,7 @@ def launch_keep_fighting(difficulty, player, used_monsters):
     MONSTER_NAMES, WEAPON_NAMES = get_cst_names()
     clear_console()
 
-    print("Tu t'enfonces dans les ténèbres à la recherche d'une réponse")
+    print("\nTu t'enfonces dans les ténèbres à la recherche d'une réponse...")
 
     available_enemies = []
     for i in MONSTER_NAMES:
@@ -296,7 +308,7 @@ def launch_keep_fighting(difficulty, player, used_monsters):
     new_weapon_name = random.choice(WEAPON_NAMES)
     new_weapon_power = int(10*MONSTER_SCALE**difficulty)
 
-    new_enemy = Monster(new_enemy_name, new_enemy_pv, Weapon(new_weapon_name, new_weapon_power, 0, 0), 1)
+    new_enemy = Monster(new_enemy_name, new_enemy_pv, Weapon(new_weapon_name, new_weapon_power, 0, 0, 0), 1)
     # FAIRE DES RANDOMS WEAKNESSES !!!!!!!!!!!!!
 
     player.max_pv = int(100*MONSTER_SCALE**difficulty)

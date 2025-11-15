@@ -1,5 +1,5 @@
 
-from random import choice, randint
+from random import choices, randint
 
 import json
 
@@ -38,65 +38,67 @@ class Object:
                 for i, weapon in enumerate(player.weapons):
                     print(f"[{i+1}] {weapon.name} (Att: {weapon.power})")
             def conf(action_input):
-                return action_input.isdigit() and 0 < int(which_one) <= len(player.weapons)
+                return action_input.isdigit() and 0 < int(action_input) <= len(player.weapons)
 
             which_one = solid_input(conf, to_display)
 
-            player.weapons[int(which_one)-1].power += self.value
-            print(f"{self.name} augmente la puissance de {player.weapons[int(which_one)-1]} de {self.value}")
+            if player.weapons[int(which_one)-1].add_buff(self.value):
+                print(f"{self.name} augmente la puissance de {player.weapons[int(which_one)-1]} de {self.value}")
+                print(f"{player.weapons[int(which_one)-1].buff_count}/{player.weapons[int(which_one)-1].MAX_BUFFS} utilisé(s) sur cette arme")
+            else:
+                print(f"{self.name} ne peut plus être amélioré")
 
         elif self.effect == "shield":
             player.shield(self.value)
             print(f"{self.name} érige un bouclier ayant {self.value} PV")
 
+        elif self.effect == "mana_charge":
+            player.mana_charge(self.value)
+            print(f"{self.name} régénère {self.value} MANA")
+
         else:
             print("[DEBUG] Je n'ai pas programmé cet effet")
 
-def rand_obj():
+def get_rand_obj(inv, lvl_bonus=False, lvl=1):
     if not OBJECT_BLUEPRINTS: # Fallback si le json merde
         return Object("Potion par défaut", "heal", 50)
 
-    blueprint = choice(OBJECT_BLUEPRINTS)
-    name, effect, min_value, max_value = blueprint
-    value = randint(min_value, max_value)
+    owned_obj = [obj.name for obj in inv if obj.effect != "new_obj"]
+    available_obj = []
+    probabilities = []
+
+    for obj in OBJECT_BLUEPRINTS:
+        name, effect, min_value, max_value, prob = obj
+        if name not in owned_obj:
+            available_obj.append(obj)
+            probabilities.append(prob)
+
+    if not available_obj:
+        print("[DEBUG] Shouldn't happen")
+        if lvl_bonus:
+            available_obj = OBJECT_BLUEPRINTS
+            probabilities = [objet[4] for objet in OBJECT_BLUEPRINTS]
+        else:
+            return None
+
+    tot = sum(probabilities)
+    norm_prob = [p / tot for p in probabilities]
+
+    template = choices(available_obj, weights=norm_prob, k=1)[0]
+
+    name, effect, min_value, max_value, _ = template
+
+    if lvl_bonus:
+        bonus = lvl*5
+        value = randint(min_value + bonus, max_value + bonus)
+    else:
+        value = randint(min_value, max_value)
+
     return Object(name, effect, value)
+
 
 def rand_obj_inv(inv):
-    if not OBJECT_BLUEPRINTS:  # Fallback si le json merde
-        return Object("Potion par défaut", "heal", 50)
-    owned_obj = []
-    available_obj = []
-    for obj in inv:
-        if obj.effect != "new_obj":
-            owned_obj.append(obj.name)
-    for obj in OBJECT_BLUEPRINTS:
-        if obj[0] not in owned_obj:
-            available_obj.append(obj)
-    if not available_obj:
-        return None
-    name, effect, min_v, max_v = choice(available_obj)
-    value = randint(min_v, max_v)
-    return Object(name, effect, value)
+    return get_rand_obj(inv, lvl_bonus=False)
 
 def enemy_loot(lvl, inv):
-    if not OBJECT_BLUEPRINTS:  # Fallback si le json merde
-        return Object("Potion par défaut", "heal", 50)
-
-    owned_obj = []
-    available_obj = []
-    for obj in inv:
-        if obj.effect != "new_obj":
-            owned_obj.append(obj.name)
-    for obj in OBJECT_BLUEPRINTS:
-        if obj[0] not in owned_obj:
-            available_obj.append(obj)
-    if not available_obj:
-        template = choice(OBJECT_BLUEPRINTS)
-    else:
-        template = choice(available_obj)
-
-    name, effect, min_value, max_value = template
-
-    lvl_bonus = lvl * 5
-    value = randint(min_value + lvl_bonus, max_value + lvl_bonus)
-    return Object(name, effect, value)
+    return get_rand_obj(inv, lvl_bonus=True, lvl=lvl)

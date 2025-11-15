@@ -28,11 +28,13 @@
     "Examen ISA"
   ],
   "object_blueprints": [
-    ["Petite popo de soin", "heal", 30, 60],
-    ["Grande popo de soin", "heal", 60, 120],
-    ["Buff instant", "att_boost", 20, 40],
-    ["Buff divin", "att_boost", 40, 80],
-    ["P'tit bouclier", "shield", 20, 40],
-    ["Ama-no-Iwato", "shield", 40, 80]
+    ["Petite popo de soin", "heal", 30, 60, 0.175],
+    ["Grande popo de soin", "heal", 60, 120, 0.075],
+    ["Buff instant", "att_boost", 20, 40, 0.175],
+    ["Buff divin", "att_boost", 40, 80, 0.075],
+    ["P'tit bouclier", "shield", 20, 40, 0.175],
+    ["Ama-no-Iwato", "shield", 40, 80, 0.075],
+    ["Vol-au-vent", "mana_charge", 5, 10, 0.175],
+    ["Carbonade", "mana_charge", 10, 20, 0.075]
   ]
 }

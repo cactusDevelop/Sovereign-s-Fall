@@ -33,12 +33,13 @@ class Fight:
         self.weakness_turns_remaining = 0
         self.analysis_count = MAX_ANALYSIS
         self.level = level
+        self.txt_buffer = []
 
 
     def fight_loop(self):
-        input("\nPrêt ?")
+        input("Un monstre apparait et engage le combat")
         print(f"\n{self.player.name} engage le combat contre \033[1;32m{self.enemy.name}\033[0;0m")
-        play_sound("nightwalker", True)
+        play_sound("fight", True)
 
         while True:
             self.turn_count += 1
@@ -135,18 +136,22 @@ class Fight:
 
 
     def enemy_turn(self): # ENEMY IA PLS
-        clear_console()
+        #clear_console()
         print("\n"+"="*5+"| \033[31m"+self.enemy.name+"'s turn"+"\033[0m |"+"="*15)
 
         if random.random() < MISS_CHANCE:
             play_sound("miss-swing")
             print(f"{self.enemy.name} rate lamentablement son attaque")
+        elif self.enemy.weapon.power == 0:
+            self.enemy.attack(self.player)
+            play_sound("miss-swing")
         else:
             self.enemy.attack(self.player)
             play_sound("monster-attack")
 
+        input("Continuer...")
+        clear_console()
         self.display_status()
-        input()
 
 
 
@@ -166,6 +171,7 @@ class Fight:
         p_pv_ratio = self.player.pv * 10 // self.player.max_pv
         p_stim_ratio = self.player.stim * 10 // self.player.max_stim
         e_pv_ratio = self.enemy.pv * 10 // self.enemy.max_pv
+        p_mana_ratio = self.player.mana * 10 // self.player.max_mana
         left_offset = 2
 
         line_0 = f" NIVEAU {self.level}"
@@ -177,19 +183,23 @@ class Fight:
         line_2 += " "*(get_width()//2-len(line_2)+left_offset)
         line_2 += "█"*e_pv_ratio + "_"*(10-e_pv_ratio) + " | " + str(self.enemy.pv) + "/" + str(self.enemy.max_pv) +" PV"
         line_3 = " "*left_offset + "█"*p_stim_ratio + "_"*(10-p_stim_ratio) + " | " + str(self.player.stim) + "/" + str(self.player.max_stim) +" ULT"
-
+        line_4 = " "*left_offset + "█"*p_mana_ratio + "_"*(10-p_mana_ratio) + " | " + str(self.player.mana) + "/" + str(self.player.max_mana) +" MANA"
 
         print(line_0)
         print()
         print(line_1)
         print(line_2)
         print(line_3)
+        print(line_4)
         if self.weakness_turns_remaining > 0:
-            print(" "*left_offset + f" Analysis actif pour {self.weakness_turns_remaining} tour(s)")
+            print(" "*left_offset + f" -Analysis actif pour {self.weakness_turns_remaining} tour(s)")
         else:
             self.enemy.weapon.power = self.enemy.weapon.original_power
         print()
 
+        if self.txt_buffer:
+            print("\n".join(self.txt_buffer))
+            print()
 
     def find_weakness(self): #Attention la faiblesse n'est activée qu'à l'appel de la fct, après si c fait exprès...
         if self.enemy.weakness == 0:
@@ -222,7 +232,9 @@ class Fight:
                     print("=" * 10 + "Menu" + "=" * 10)
                     for i, option in enumerate(nav_menu):
                         if option == "Analysis":
-                            print(f"[{i + 1}] {option} ({self.analysis_count})")
+                            print(f"[{i + 1}] {option} ({self.analysis_count}/10)")
+                        elif option == "Objects":
+                            print(f"[{i + 1}] {option} ({len(player.inventory)}/6)")
                         else:
                             print(f"[{i+1}] {option}")
                 def conf(action_input):
@@ -236,7 +248,7 @@ class Fight:
                     self.display_status()
                     print("="*10 + "Weapons" + "="*10)
                     for i, option in enumerate(player.weapons):
-                        print(f"[{i+1}] {option.name} (Att:{option.power}, Stim:{option.stim}, Mana:{option.mana})")
+                        print(f"[{i+1}] {option.name} (Att:{option.power}, Ult:{option.stim}, Mana:{option.mana})")
                     print(f"[{len(player.weapons)+1}] Retour")
                 def conf(action_input):
                     return action_input.isdigit() and 0 < int(action_input) <= len(player.weapons)+1

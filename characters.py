@@ -1,8 +1,8 @@
 
 from random import choice
 
-from object import rand_obj
 
+ULT_COEFFICIENT = 5
 
 class Character:
     def __init__(self, name: str, pv: int, max_pv:int):
@@ -41,12 +41,13 @@ class Player(Character):
 
     def ult(self, target):
         if self.can_ult:
-            dgt = 0
+            dgt = 1
             for weapon in self.weapons:
-                dgt += weapon.power
-            self.can_ult = False
+                dgt *= max(weapon.power,1)
+            dgt = int(ULT_COEFFICIENT*(dgt**(1/3)))
+
             target.pv = max(target.pv-dgt, 0)
-            print(f"Vos armes attaquent de {dgt}")
+            print(f"Vos armes s'unissent et attaquent de {dgt} dégats !")
 
             self.can_ult = False
             self.stim = 0
