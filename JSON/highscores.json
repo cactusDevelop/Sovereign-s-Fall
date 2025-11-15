@@ -1,6 +1,12 @@
 {
-    "highscore": 1560,
+    "highscore": 3160,
     "history": [
+        {
+            "nickname": "zahoe",
+            "score": 3160,
+            "level": 18,
+            "date": "2025-11-15T22:20:29.070444"
+        },
         {
             "nickname": "Zizi",
             "score": 2820,
@@ -45,11 +51,7 @@
             "nickname": "Adr",
             "score": 160,
             "level": 3
-        },
-        {
-            "nickname": "Vous",
-            "score": 100,
-            "level": 1
         }
-    ]
+    ],
+    "last_update": "2025-11-15T22:20:29.084732"
 }
