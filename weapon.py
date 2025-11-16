@@ -53,12 +53,30 @@ def rand_stats(x):
 
 def gen_classic():
     stats = rand_stats(10)
-    a = Weapon(rand_names(), stats[0], stats[1], stats[2], 0)
+    c_name = rand_names()
+
+    if c_name == "ISA-LIBUR":
+        a = Weapon(c_name, 99999, 99999, 0, 0)
+        print()  # Faire une animation ascii que prsn ne verra ici
+        print("UNE ARME EXCEPTIONNELLE T'EST ACCORDEE")
+        print("LA DIVINITE 61L15 TE PRETE ISA-LIBUR !")
+    else:
+        a = Weapon(c_name, stats[0], stats[1], stats[2], 0)
+
     return a
 
 def gen_op():
     stats = rand_stats(11)
-    a = Weapon(rand_names(), stats[0], stats[1], stats[2], 0)
+    o_name = rand_names()
+
+    if o_name == "ISA-LIBUR":
+        a = Weapon(o_name, 99999, 99999, 0, 0)
+        print() # Faire une animation ascii que prsn ne verra ici
+        print("UNE ARME EXCEPTIONNELLE T'EST ACCORDEE")
+        print("LA DIVINITE 61L15 TE PRETE ISA-LIBUR !")
+    else:
+        a = Weapon(o_name, stats[0], stats[1], stats[2], 0)
+
     return a
 
 def generate_starters():
