@@ -1,40 +1,40 @@
 {
     "player": {
-        "nickname": "def",
+        "nickname": "Joueur37",
         "pv": 100,
         "max_pv": 100,
         "stim": 300,
         "max_stim": 500,
-        "mana": 20,
-        "max_mana": 20,
+        "mana": 10,
+        "max_mana": 10,
         "current_level": 0,
         "score": 0,
         "weapons_inv": {
             "weapon_slot_1": {
-                "name": "Apeeaag",
-                "power": 70,
-                "stim": 70,
+                "name": "Vsrktmi",
+                "power": 60,
+                "stim": 80,
                 "mana": 4,
                 "buff_count": 0
             },
             "weapon_slot_2": {
-                "name": "Ernnhei",
-                "power": 90,
+                "name": "Eeeroip",
+                "power": 80,
                 "stim": 70,
                 "mana": 5,
                 "buff_count": 0
             },
             "weapon_slot_3": {
-                "name": "Elnsthl",
-                "power": 90,
-                "stim": 40,
-                "mana": 3,
+                "name": "Etteu",
+                "power": 50,
+                "stim": 90,
+                "mana": 4,
                 "buff_count": 0
             }
         },
         "objects_inv": {
             "object_slot_1": {
-                "name": "Sac des abimes",
+                "name": "Sac des abîmes",
                 "effect": "new_obj",
                 "value": 0
             }

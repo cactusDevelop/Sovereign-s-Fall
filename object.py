@@ -10,6 +10,8 @@ with open("JSON/cst_data.json", "r", encoding="utf-8") as read_file:
     OBJECT_BLUEPRINTS = cst_data.get("object_blueprints", [])
 
 MAX_INV_SIZE = 6
+OBJECT_SCALE = 1.15
+OBJECT_SCALE_SLOWDOWN = 5
 
 class Object:
     def __init__(self, name: str, effect: str, value):
@@ -101,11 +103,10 @@ def get_rand_obj(inv, lvl_bonus=False, lvl=1):
     norm_prob = [p / tot for p in probabilities]
 
     template = choices(available_obj, weights=norm_prob, k=1)[0]
-
     name, effect, min_value, max_value, _ = template
 
     if lvl_bonus and effect != "mana_charge":
-        bonus = lvl*5
+        bonus = int(min_value*OBJECT_SCALE**(lvl/OBJECT_SCALE_SLOWDOWN))
         value = randint(min_value + bonus, max_value + bonus)
     else:
         value = randint(min_value, max_value)

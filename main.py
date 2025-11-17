@@ -80,8 +80,10 @@ def show_hs():  # [BALISE ONLINE HIGHSCORES]
 
     try:
         online_scores = get_online_leaderboard()
-        if not online_scores:
+        if online_scores is None:  # <- Changez ici : testez explicitement None
             print("Aucun score en ligne...")
+        elif len(online_scores) == 0:  # <- Ajoutez ce test pour liste vide
+            print("Aucun score enregistré pour le moment...")
         else:
             for rank, entry in enumerate(online_scores, 1):
                 date = entry.get('date', '')[:10] if 'date' in entry else ''
@@ -116,7 +118,7 @@ def show_hs():  # [BALISE ONLINE HIGHSCORES]
                 print(f"   {rank:2}) {nickname:<20} - {score_info}")
 
     input("\nRetour >")
-    
+
 
 # CUTSCENE
 def run_intro():

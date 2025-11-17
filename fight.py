@@ -108,11 +108,11 @@ class Fight:
 
             self.analysis_count-=1
 
-            print(f"Point faible adverse : {self.find_weakness()}")
+            print(f"\nMeilleure compréhension : {self.find_weakness()}")
             return "Ana"
 
         elif instruction == "Ultime":
-            print("La volonté des dieux vous accompagnent...")
+            print("\nLa volonté des dieux vous accompagnent...")
             self.player.ult(self.enemy)
             return "Ult"
 

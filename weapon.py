@@ -79,6 +79,11 @@ def gen_op():
 
     return a
 
+def gen_boss_weapon(lvl):
+    b_name = rand_names().upper()
+    stats = rand_stats(10+(lvl//2))
+    return Weapon(b_name, stats[0], stats[1], stats[2], 0)
+
 def generate_starters():
     starter_list = []
     already_used_stats = set()

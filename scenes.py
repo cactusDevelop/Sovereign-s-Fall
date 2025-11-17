@@ -5,7 +5,7 @@ from json_manager import get_cst_names, save_hs, clear_save
 from weapon import generate_starters
 from musics import play_sound, stop_sound
 from characters import Monster
-from weapon import Weapon
+from weapon import Weapon, gen_boss_weapon
 from object import Object, enemy_loot, MAX_INV_SIZE
 from fight import Fight
 from global_func import *
@@ -17,11 +17,14 @@ from online_highscores_hors_projet import save_score_with_fallback
 
 incognito = " \033[1;32m???\033[0m"
 #starters = generate_starters() A cause de random.seed()
-OBJ_STARTER = Object("Sac des abimes", "new_obj", 0)
+OBJ_STARTER = Object("Sac des abîmes", "new_obj", 0)
+CHEAT_WEAPON = Weapon("Mange tes morts", 999, 999, 0, 0)
+
+# EQUILIBRAGE
 PLAYER_SCALE = 1.15
 MONSTER_SCALE = 1.2
-BOSS_SCALE = 1.3
-CHEAT_WEAPON = Weapon("Mange tes morts", 999, 999, 0, 0)
+BOSS_PV = 5
+BOSS_ATT = 2
 
 
 MAX_NAME_SIZE = get_width()//3
@@ -102,7 +105,7 @@ def launch_cutscene(data):
         "\n   ⣿⣿⣿⣿⣿⣿⣿⣷⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
         "\n   ⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿"
         "\n"
-        "\n   Pour continuer : Touche -> \033[1mENTER <- \033[0;32m"))
+        "\n   Pour continuer : Appuyer sur -> \033[1mENTER <- \033[0;32m"))
     input()
     print((
         "\n\n\n"
@@ -237,7 +240,7 @@ def launch_starters_scene(data):
     play_sound("bell")
 
     slow_print((f"\n{incognito} : « Ah, j'ai oublié de préciser que vous pourrez faire une attaque combinée... »",
-                f"{incognito} : « Donc vous aurez besoin deux autres armes en plus. »"))
+                f"{incognito} : « Donc vous aurez besoin de deux autres armes supplémentaires. »"))
 
     print("\n <2e arme>")
     weapon_slot_2 = choose_starter(starters)
@@ -275,7 +278,7 @@ def launch_starters_scene(data):
     data["player"]["pv"] = data["player"]["max_pv"] = 100
     data["player"]["stim"] = 300
     data["player"]["max_stim"] = 500
-    data["player"]["mana"] = data["player"]["max_mana"] = 20
+    data["player"]["mana"] = data["player"]["max_mana"] = 10
 
     stop_sound(2000)
 
@@ -283,48 +286,96 @@ def launch_starters_scene(data):
     input()
 
 def launch_tuto_fight(player):
-    tuto_enemy = Monster("Enemy gez", 200, Weapon("Arme éclaté", 20, 0, 0, 0), 1)
+    tuto_enemy = Monster("Enemy gez", 200, Weapon("Epée de l'ennemi", 20, 0, 0, 0), 1)
     result = Fight(player, tuto_enemy, 0).fight_loop()
     return result
 
 def launch_keep_fighting(difficulty, player, used_monsters):
-    MONSTER_NAMES, WEAPON_NAMES = get_cst_names()
     clear_console()
 
-    print("\nTu t'enfonces dans les ténèbres à la recherche d'une réponse...")
+    MONSTER_NAMES, BOSS_NAMES, WEAPON_NAMES = get_cst_names()
+    is_bossfight = (difficulty % 5 == 0 and difficulty != 0)
 
-    available_enemies = []
-    for i in MONSTER_NAMES:
-        if i not in used_monsters:
-            available_enemies.append(i)
+    if is_bossfight:
+        print("BOSSFIGHT TXT")
+        input()
+        boss_name = f"BOSS {random.choice(BOSS_NAMES).upper()}"
+        player_legend = sum(i.power for i in player.weapons)
+        boss_pv = int(player.max_pv*BOSS_PV)
+        boss_power = int(player_legend*BOSS_ATT)
+        boss_weapon = Weapon("Arme très puissante", boss_power, 0, 0, 0)
+        new_enemy = Monster(boss_name, boss_pv, boss_weapon, 0)
 
-    if len(available_enemies) == 0:
-        available_enemies = MONSTER_NAMES.copy()
-        used_monsters.clear()
+        player.pv = int(player.max_pv//(4/3))
+        player.mana = player.max_mana//2
 
-    new_enemy_name = random.choice(available_enemies)
-    used_monsters.append(new_enemy_name)
-    new_enemy_pv = int(200*MONSTER_SCALE**difficulty)
-    new_weapon_name = random.choice(WEAPON_NAMES)
-    new_weapon_power = int(10*MONSTER_SCALE**difficulty)
+    else:
+        print("\nTu t'enfonces dans les ténèbres à la recherche d'une réponse...")
 
-    new_enemy = Monster(new_enemy_name, new_enemy_pv, Weapon(new_weapon_name, new_weapon_power, 0, 0, 0), 1)
-    # FAIRE DES RANDOMS WEAKNESSES !!!!!!!!!!!!!
+        available_enemies = []
+        for i in MONSTER_NAMES:
+            if i not in used_monsters:
+                available_enemies.append(i)
 
-    player.max_pv = int(100*MONSTER_SCALE**difficulty)
-    player.pv = player.max_pv
-    player.mana = player.max_mana
+        if len(available_enemies) == 0:
+            available_enemies = MONSTER_NAMES.copy()
+            used_monsters.clear()
 
+        new_enemy_name = random.choice(available_enemies)
+        used_monsters.append(new_enemy_name)
+        new_enemy_pv = int(200*MONSTER_SCALE**difficulty)
+        new_weapon_name = random.choice(WEAPON_NAMES)
+        new_weapon_power = int(10*MONSTER_SCALE**difficulty)
+
+        new_enemy = Monster(new_enemy_name, new_enemy_pv, Weapon(new_weapon_name, new_weapon_power, 0, 0, 0), 1)
+        # FAIRE DES RANDOMS WEAKNESSES !!!!!!!!!!!!!
+
+        player.max_pv = int(100*PLAYER_SCALE**difficulty)
+        player.pv = player.max_pv
+        player.mana = player.max_mana
+
+    # START FIGHTIN'
     result = Fight(player, new_enemy, difficulty).fight_loop()
 
     if result is True:
-        if len(player.inventory) >= MAX_INV_SIZE:
-            print("Inventaire plein, pas de loot")
+        if is_bossfight:
+            print("\nTu as battu un haut offier de l'espace mental Roi")
+            print("Son arme a l'air forte...")
             input()
+            clear_console()
+            play_sound("bell")
+
+            b_weapon = gen_boss_weapon(difficulty)
+
+            def to_display():
+                print("Choisir une arme à jeter :")
+                for i, weapon in enumerate(player.weapons):
+                    print(f"[{i+1}] {weapon.name} (Att: {weapon.power}, Ult: {weapon.stim}, Mana: {weapon.mana})")
+                print(f"[{len(player.weapons)+1}] {b_weapon.name} : {b_weapon.name} (Att: {b_weapon.power}, Ult: {b_weapon.stim}, Mana: {b_weapon.mana})")
+            def conf(action_input):
+                return action_input.isdigit() and 0 < int(action_input) <= len(player.weapons) +1
+
+            choice = int(solid_input(conf, to_display)) - 1
+
+            if choice < len(player.weapons):
+                print(f"\n{player.weapons[choice]} jetée")
+                play_sound("bell") # Throw sound better
+                player.weapons[choice] = b_weapon
+            else:
+                print(f"\n{b_weapon} jetée")
+                play_sound("bell")
+
+            input()
+
+
         else:
-            loot = enemy_loot(difficulty,player.inventory)
-            player.inventory.append(loot)
-            print(f"\n L'ennemi a laissé tomber {loot.name} (Effet: {loot.effect} {loot.value})")
-            input()
+            if len(player.inventory) >= MAX_INV_SIZE:
+                print("Inventaire plein, pas de loot")
+                input()
+            else:
+                loot = enemy_loot(difficulty,player.inventory)
+                player.inventory.append(loot)
+                print(f"""\n L'ennemi a laissé tomber "{loot.name}" (Effet: {loot.effect} {loot.value})""")
+                input()
 
     return result

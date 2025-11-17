@@ -13,7 +13,7 @@ with open("JSON/highscores.json", "r", encoding="utf-8") as read_hs:
     hs = json.load(read_hs)
 
 def get_cst_names():
-    return cst["monster_names"], cst["weapon_names"]
+    return cst["monster_names"], cst["boss_names"], cst["weapon_names"]
 
 def save_hs(nickname, score, level):
     hs["history"].append({"nickname": nickname, "score": int(score), "level": int(level)})

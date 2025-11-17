@@ -12,12 +12,13 @@ class Character:
         self.weapon = None
 
     def attack(self, target):
-        if hasattr(target, "calc_dmg"):
+        if hasattr(target, "calc_dmg"): # Joueur
             target.calc_dmg(self.weapon.power)
-        else:
-            target.pv = max(target.pv - self.weapon.power, 0)
+            print(f"""L'arme "{self.weapon.name}" inflige {self.weapon.power} dégats à {target.name} ({target.pv} PV restants)""")
 
-        print(f"""L'arme "{self.weapon.name}" inflige {self.weapon.power} dégats à {target.name} ({target.pv} PV restants)""")
+        else: # Ennemi
+            target.pv = max(target.pv - self.weapon.power, 0)
+            print(f""""{self.weapon.name}" inflige {self.weapon.power} dégats à {target.name} ({target.pv} PV restants)""")
 
 
 class Player(Character):

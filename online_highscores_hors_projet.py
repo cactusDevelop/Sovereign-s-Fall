@@ -87,25 +87,27 @@ class OnlineHighscores:
             if response.status_code == 200:
                 data = response.json()
                 self.last_sha = data['sha']
+
+                # DEBUG: Afficher le contenu brut
+                #print(f"[DEBUG] Content encodé (100 premiers chars): {data['content'][:100]}")
+
                 content = base64.b64decode(data['content']).decode('utf-8')
+
+                # DEBUG: Afficher le contenu décodé
+                #print(f"[DEBUG] Content décodé: {content}")
+
                 self.local_cache = json.loads(content)
+                #print(f"[DEBUG] JSON parsé: {self.local_cache}")
+
                 return self.local_cache
-            elif response.status_code == 404:
-                print("[INFO] Création du fichier de scores en ligne...")
-                initial_data = {
-                    "highscore": 0,
-                    "history": []
-                }
-                self.create_initial_file(initial_data)
-                return initial_data
-            else:
-                print(f"[ERREUR] Impossible de récupérer les scores: {response.status_code}")
-                return None
+
         except requests.exceptions.Timeout:
             print("[ERREUR] Timeout - Vérifiez votre connexion internet")
             return None
         except Exception as e:
             print(f"[ERREUR] Erreur lors de la récupération: {e}")
+            import traceback
+            traceback.print_exc()
             return None
 
     def create_initial_file(self, data):
