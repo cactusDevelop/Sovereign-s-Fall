@@ -1,6 +1,8 @@
 
 from random import shuffle, randint, gauss, choice
 
+CLASSIC_N = 10
+OP_N = 11
 NUM_CLASSIC_STARTER = 4
 NUM_OP_STARTER = 1
 WEAPON_MIN_MANA = 3
@@ -51,36 +53,20 @@ def rand_stats(x):
 
     return [power_value*10, stim_value*10, mana]
 
-def gen_classic():
-    stats = rand_stats(10)
-    c_name = rand_names()
+def create_weapon(x:int):
+    name = rand_names()
+    stats = rand_stats(x)
 
-    if c_name == "ISA-LIBUR":
-        a = Weapon(c_name, 99999, 99999, 0, 0)
+    if name == "ISA-LIBUR":
         print()  # Faire une animation ascii que prsn ne verra ici
         print("UNE ARME EXCEPTIONNELLE T'EST ACCORDEE")
         print("LA DIVINITE 61L15 TE PRETE ISA-LIBUR !")
+        return Weapon(name, 99999, 99999, 0, 0)
     else:
-        a = Weapon(c_name, stats[0], stats[1], stats[2], 0)
-
-    return a
-
-def gen_op():
-    stats = rand_stats(11)
-    o_name = rand_names()
-
-    if o_name == "ISA-LIBUR":
-        a = Weapon(o_name, 99999, 99999, 0, 0)
-        print() # Faire une animation ascii que prsn ne verra ici
-        print("UNE ARME EXCEPTIONNELLE T'EST ACCORDEE")
-        print("LA DIVINITE 61L15 TE PRETE ISA-LIBUR !")
-    else:
-        a = Weapon(o_name, stats[0], stats[1], stats[2], 0)
-
-    return a
+        return Weapon(name, stats[0], stats[1], stats[2], 0)
 
 def gen_boss_weapon(lvl):
-    b_name = rand_names().upper()
+    b_name = "\033[0;93m"+rand_names().upper()+"\033[0m"
     stats = rand_stats(10+(lvl//2))
     return Weapon(b_name, stats[0], stats[1], stats[2], 0)
 
@@ -90,7 +76,7 @@ def generate_starters():
 
     attempt = 0
     while len(starter_list) < NUM_CLASSIC_STARTER and GEN_ATTEMPTS > attempt :
-        weapon = gen_classic()
+        weapon = create_weapon(CLASSIC_N)
         if weapon not in already_used_stats:
             starter_list.append(weapon)
             already_used_stats.add(weapon)
@@ -99,7 +85,7 @@ def generate_starters():
     attempt = 0
     approved = True
     while len(starter_list) < (NUM_CLASSIC_STARTER+NUM_OP_STARTER) and GEN_ATTEMPTS > attempt :
-        op_weapon = gen_op()
+        op_weapon = create_weapon(OP_N)
         for classic_weapon in starter_list:
             if ((op_weapon.power == classic_weapon.power + 10 and
                 op_weapon.stim == classic_weapon.stim and
@@ -117,9 +103,9 @@ def generate_starters():
 
     while len(starter_list) < (NUM_CLASSIC_STARTER + NUM_OP_STARTER):
         if len(starter_list) < NUM_CLASSIC_STARTER:
-            starter_list.append(gen_classic())
+            starter_list.append(create_weapon(CLASSIC_N))
         else:
-            starter_list.append(gen_op()) # Dernière chance
+            starter_list.append(create_weapon(OP_N)) # Dernière chance
 
     shuffle(starter_list)
     return starter_list

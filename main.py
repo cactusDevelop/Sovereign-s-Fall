@@ -1,5 +1,3 @@
-import time
-
 # cd..\..\Users\Cactusdev\OneDrive\Desktop\Roguelike\RoguelikeProject
 # https://github.com/cactusDevelop/RoguelikeProject/tree/master
 
@@ -36,10 +34,12 @@ def display_menu():
         try:   # [BALISE ONLINE HIGHSCORES]
             online_hs = get_online_highscore()
             if online_hs > 0:
-                print("\n+"+"-"*10)
-                print(f"+ \033[32;1mRECORD MONDIAL : {online_hs}\033[0m")
+                line_2 = f"░█\033[33;7m RECORD MONDIAL : {online_hs} \033[0m░█"
+
+                print("\n ░█"+"█"*(len(line_2)-15))
+                print(line_2)
                 #print(f"| par {best['nickname']} (Niveau {best['level']})")
-                print("+" + "-" * 30)
+                print(" ░█" + "█"*(len(line_2)-15))
         except:
             if hs["highscore"] > 0:
                 print("\n " + "_" * 10)

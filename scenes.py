@@ -93,6 +93,8 @@ def launch_cutscene(data):
 
     print((
         f"\n{green}"
+        "\n *sauvegarde auto*"
+        "\n"
         "\n          ⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷"
         "\n   ⠀⠀⠀⠀ ⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
         "\n   ⠀⠀⠀⠀⠀ ⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
@@ -277,6 +279,7 @@ def launch_tuto_fight(player):
 
 def launch_keep_fighting(difficulty, player, used_monsters):
     clear_console()
+    stop_sound(1000)
 
     MONSTER_NAMES, BOSS_NAMES, WEAPON_NAMES = get_cst_names()
     is_bossfight = (difficulty % 5 == 0 and difficulty != 0)
@@ -318,7 +321,9 @@ def launch_keep_fighting(difficulty, player, used_monsters):
 
         player.max_pv = int(100*PLAYER_SCALE**difficulty)
         player.pv = player.max_pv
+        player.max_mana = int(10*PLAYER_SCALE**difficulty)
         player.mana = player.max_mana
+        player.max_stim = int(200*PLAYER_SCALE**difficulty)
 
     # START FIGHTIN'
     result = Fight(player, new_enemy, difficulty).fight_loop()
@@ -337,18 +342,18 @@ def launch_keep_fighting(difficulty, player, used_monsters):
                 print("Choisir une arme à jeter :")
                 for i, weapon in enumerate(player.weapons):
                     print(f"[{i+1}] {weapon.name} (Att: {weapon.power}, Ult: {weapon.stim}, Mana: {weapon.mana})")
-                print(f"[{len(player.weapons)+1}] {b_weapon.name} : {b_weapon.name} (Att: {b_weapon.power}, Ult: {b_weapon.stim}, Mana: {b_weapon.mana})")
+                print(f"[{len(player.weapons)+1}] {b_weapon.name} (Att: {b_weapon.power}, Ult: {b_weapon.stim}, Mana: {b_weapon.mana})")
             def conf(action_input):
                 return action_input.isdigit() and 0 < int(action_input) <= len(player.weapons) +1
 
             choice = int(solid_input(conf, to_display)) - 1
 
             if choice < len(player.weapons):
-                print(f"\n{player.weapons[choice]} jetée")
+                print(f"""\n"{player.weapons[choice].name}" jetée""")
                 play_sound("bell") # Throw sound better
                 player.weapons[choice] = b_weapon
             else:
-                print(f"\n{b_weapon} jetée")
+                print(f"\n{b_weapon.name} jetée")
                 play_sound("bell")
 
             wait_input()

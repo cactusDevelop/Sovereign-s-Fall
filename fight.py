@@ -6,7 +6,7 @@ from musics import play_sound, stop_sound
 
 
 MAX_NAV_ITERATIONS = 30
-FADE_OUT = 3500 #ms
+FADE_OUT = 2500 #ms
 MAX_ANALYSIS = 8
 MISS_CHANCE = 0.05
 
@@ -27,8 +27,9 @@ class Fight:
 
 
     def fight_loop(self):
-        input("Un monstre apparait et engage le combat")
+        print("Un monstre apparait et engage le combat")
         print(f"\n{self.player.name} engage le combat contre \033[1;32m{self.enemy.name}\033[0;0m")
+        wait_input()
         play_sound("fight", True)
 
         while True:
@@ -75,7 +76,7 @@ class Fight:
 
 
     def player_turn(self):
-        self.player.mana_ult_charge(1)
+        self.player.mana += 1
 
         instruction, value = self.nav(self.player)
 
@@ -127,7 +128,7 @@ class Fight:
 
     def enemy_turn(self): # ENEMY IA PLS
         #clear_console()
-        print("\n"+"="*5+"| \033[31m"+self.enemy.name+"'s turn"+"\033[0m |"+"="*15)
+        print("\n"+"="*5 + "| \033[31m" + self.enemy.name + "'s turn"+"\033[0m |" + "="*(get_width()-9-len(self.enemy.name)))
 
         if random.random() < MISS_CHANCE:
             play_sound("miss-swing")
@@ -228,7 +229,7 @@ class Fight:
 
             if current_pos == "Nav":
                 def to_display():
-                    print("\n" + "=" * 5 + "| \033[1;36m" + self.player.name + "'s turn" + "\033[0m |" + "=" * 15)
+                    print("\n" + "=" * 5 + "| \033[1;36m" + self.player.name + "'s turn" + "\033[0m |" + "="*(get_width()-9-len(self.player.name)))
 
                     self.display_status()
                     print("=" * 10 + "Menu" + "=" * 10)
@@ -249,8 +250,11 @@ class Fight:
                 def to_display():
                     self.display_status()
                     print("="*10 + "Weapons" + "="*10)
+
+                    max_len = max(len(w.name.replace('\033[0;93m', '').replace('\033[0m', '')) for w in player.weapons)
                     for i, option in enumerate(player.weapons):
-                        offset = " " * (max(len(w.name) for w in player.weapons)+2-len(option.name))
+                        clean_name = option.name.replace('\033[0;93m', '').replace('\033[0m', '') # Tt ça à cause du boss
+                        offset = " " * (max_len+2-len(clean_name))
                         print(f"[{i+1}] {option.name}{offset}(Att:{option.power}, Ult:{option.stim}, Mana:{option.mana})")
                     print(f"[{len(player.weapons)+1}] Retour")
                 def conf(action_input):
