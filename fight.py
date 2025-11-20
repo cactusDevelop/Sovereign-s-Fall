@@ -7,9 +7,10 @@ from musics import play_sound, stop_sound
 
 MAX_NAV_ITERATIONS = 30
 FADE_OUT = 2500 #ms
-MAX_ANALYSIS = 8
+MAX_ANALYSIS = 4
 MISS_CHANCE = 0.05
 red = "\033[1;31m"
+blue = "\033[0;34m"
 cyan = "\033[1;36m"
 
 with open("JSON/cst_data.json", "r", encoding="utf-8") as read_file:
@@ -29,7 +30,7 @@ class Fight:
 
 
     def fight_loop(self):
-        print(f"\n{cyan}{self.player.name}\033[0m engage le combat contre {red}{self.enemy.name}\033[0;0m")
+        print(f"\n{cyan}{self.player.name}\033[0m engage le combat contre {red}{self.enemy.name}\033[0m")
         wait_input()
         play_sound("fight", True)
 
@@ -155,18 +156,30 @@ class Fight:
         return None
 
 
-    def display_status(self): # Vs ici Thomas stv rendre ça stylé
+    def display_status(self):
         p_pv_ratio = self.player.pv * 10 // self.player.max_pv
         p_stim_ratio = self.player.stim * 10 // self.player.max_stim
         e_pv_ratio = self.enemy.pv * 10 // self.enemy.max_pv
         p_mana_ratio = self.player.mana * 10 // self.player.max_mana
+        p_shield_ratio = self.player.shield_pv * 10 // self.player.max_pv
         left_offset = 2
+
+        pv_bar = ""
+        for i in range(10):
+            if i < p_shield_ratio and i <= p_pv_ratio:
+                pv_bar += blue + "█\033[0m"
+            elif i < p_pv_ratio:
+                pv_bar += "█"
+            elif p_pv_ratio < i < p_shield_ratio:
+                pv_bar += blue + "▄\033[0m"
+            else:
+                pv_bar += "_"
 
         line_0 = f"\n NIVEAU {self.level}"
         line_1 = "=" * 5 + f"| {cyan}" + self.player.name + "'s turn" + "\033[0m |" + "="*(get_width()-16-len(self.player.name))
         line_2 = " "*left_offset + cyan + self.player.name.upper() + "\033[0m" + " "*(get_width()//2-len(self.player.name))
-        line_2 += red + self.enemy.name.upper() + "\033[0m"
-        line_3 = " "*left_offset + "█"*p_pv_ratio + "_"*(10-p_pv_ratio) + " | " + str(self.player.pv) + "/" + str(self.player.max_pv) +" PV"
+        line_2 += red + "Fragmentus " + self.enemy.name.upper() + "\033[0m"
+        line_3 = " "*left_offset + pv_bar + " | " + str(self.player.pv) + "/" + str(self.player.max_pv) +" PV"
         if self.player.shield_pv > 0:
             line_3 += f" [Bouclier {self.player.shield_pv}PV]"
         line_3 += " "*(get_width()//2-len(line_3)+left_offset)

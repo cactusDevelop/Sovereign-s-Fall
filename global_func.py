@@ -27,7 +27,7 @@ def solid_input(conf, to_display):
     try:
         action_input = input(" > ").strip()
         action_input = ''.join(char for char in action_input if ord(char) < 128)
-    except: # Tout ça pour ²
+    except: # Tout ça pour
         action_input = ""
 
     while not conf(action_input):

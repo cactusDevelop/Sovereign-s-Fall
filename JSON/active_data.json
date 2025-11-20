@@ -1,34 +1,34 @@
 {
     "player": {
-        "nickname": "Cactusdev",
-        "pv": 78,
-        "max_pv": 114,
-        "stim": 229,
-        "max_stim": 229,
+        "nickname": "Joueur44",
+        "pv": 60,
+        "max_pv": 100,
+        "stim": 200,
+        "max_stim": 200,
         "mana": 10,
         "max_mana": 10,
-        "current_level": 2,
-        "score": 20,
+        "current_level": 1,
+        "score": 100,
         "weapons_inv": {
             "weapon_slot_1": {
-                "name": "Udilie",
-                "power": 148,
-                "stim": 110,
+                "name": "Ielstrr",
+                "power": 60,
+                "stim": 80,
                 "mana": 4,
-                "buff_count": 3
+                "buff_count": 0
             },
             "weapon_slot_2": {
-                "name": "Ecrsyse",
+                "name": "Gehpeed",
                 "power": 80,
-                "stim": 70,
-                "mana": 5,
+                "stim": 50,
+                "mana": 3,
                 "buff_count": 0
             },
             "weapon_slot_3": {
-                "name": "Nasve",
+                "name": "Yvys",
                 "power": 80,
-                "stim": 60,
-                "mana": 4,
+                "stim": 80,
+                "mana": 5,
                 "buff_count": 0
             }
         },
@@ -37,37 +37,9 @@
                 "name": "Sac des abîmes",
                 "effect": "new_obj",
                 "value": 0
-            },
-            "object_slot_2": {
-                "name": "P'tit bouclier",
-                "effect": "shield",
-                "value": 38
-            },
-            "object_slot_3": {
-                "name": "Petite popo de soin",
-                "effect": "heal",
-                "value": 38
-            },
-            "object_slot_4": {
-                "name": "Grande popo de soin",
-                "effect": "heal",
-                "value": 76
-            },
-            "object_slot_5": {
-                "name": "Ama-no-Iwato",
-                "effect": "shield",
-                "value": 47
-            },
-            "object_slot_6": {
-                "name": "Vol-au-vent",
-                "effect": "mana_ult_charge",
-                "value": 6
             }
         }
     },
-    "used_monsters": [
-        "Fred de la ville de Waterloo",
-        "Louis IIV"
-    ],
+    "used_monsters": [],
     "cheat": null
 }

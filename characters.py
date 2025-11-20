@@ -3,7 +3,7 @@ from random import choice
 from musics import play_sound
 
 
-ULT_COEFFICIENT = 5
+ULT_COEFFICIENT = 4
 red = "\033[1;31m"
 cyan = "\033[1;36m"
 
@@ -41,6 +41,7 @@ class Player(Character):
 
     def mana_ult_charge(self, x):
         self.mana = min(self.mana + x, self.max_mana)
+        self.stim = min(self.stim + 10*x, self.max_stim)
 
     def ult(self, target):
         if self.can_ult:
@@ -98,29 +99,8 @@ class Player(Character):
             play_sound("monster-attack")
 
 
-
 class Monster(Character):
-    HORNS = ["^  ^",""]
-    FACE = ["O, O", "o.o", "-. -", "@ @", "P^ P"]
-    TEETH = ["___", "^^^^", "==="]
-    BODY = ["||", "| |", "//\\\\"]
-    FEET = ["'''", "^  ^", "{} {}"]
-
-    def draw_ascii(self): # Implémenter ?
-        horns = choice(self.HORNS)
-        face = choice(self.FACE)
-        teeth = choice(self.TEETH)
-        body = choice(self.BODY)
-        feet = choice(self.FEET)
-
-        return f"""{horns}\n{face}\n{teeth}\n{body}\n{feet}\n"""
-
     def __init__(self, name: str, pv: int, weapon, weakness=0):
         super().__init__(name, pv, pv)
         self.weapon = weapon
         self.weakness = weakness
-
-        self.picture = self.draw_ascii()
-
-    def die(self):
-        pass

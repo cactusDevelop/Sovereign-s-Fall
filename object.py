@@ -11,7 +11,7 @@ with open("JSON/cst_data.json", "r", encoding="utf-8") as read_file:
 
 MAX_INV_SIZE = 6
 OBJECT_SCALE = 1.15
-OBJECT_SCALE_SLOWDOWN = 5
+OBJECT_SCALE_SLOWDOWN = 2
 
 class Object:
     def __init__(self, name: str, effect: str, value):
@@ -23,7 +23,7 @@ class Object:
         if self.effect == "new_obj":
             if player.mana < 3:
                 print("Pas assez de MANA")
-                return False
+                return False # Return sert à rien
 
             elif len(player.inventory) >= MAX_INV_SIZE:
                 print("Inventaire plein...")
@@ -34,7 +34,7 @@ class Object:
                 new_object = rand_obj_inv(player.inventory)
                 #print(f"[DEBUG] rand_obj() : {new_object}")
                 player.inventory.append(new_object)
-                print(f"{self.name} a invoqué l'objet {new_object.name}")
+                print(f""""{self.name}" a invoqué l'objet "{new_object.name}" """)
                 return True
 
         elif self.effect == "heal":

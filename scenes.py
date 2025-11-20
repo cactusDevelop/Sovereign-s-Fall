@@ -194,7 +194,7 @@ def launch_cutscene(data):
         data["player"]["nickname"] = pseudo
 
         quick_print((
-            "\n\033[0mIl vous voile les yeux de force. Vous entendez le claquement sourd de la porte métallique.",
+            "\n\033[0mIl vous voile les yeux de force. Vous entendez le claquement sourd d'une porte métallique.",
             "Une nausée commence à vous prendre... Votre tête brule... Vos tympans bourdonnent...",
             "Vous vous sentez tel un Ampèremètre branché en parallèle...",
             "Et vous perdez connaissance."))
@@ -215,7 +215,7 @@ def launch_starters_scene(data):
                 "\nDevant vous, se trouve plusieurs armes difformes éparpillées sur le sol.",
                 f"\n{incognito} : « Bienvenue dans la tête du Roi, agent {nickname} »",
                 f"{incognito} : « Votre objectif sera de le {red}TuER\033[0m »",
-                f"{incognito} : « Faites vos preuves et vous deviendrez un héros national »",
+                f"{incognito} : « Pour ce faire, détruisez les fragments de son esprit que vous rencontrerez »",
                 f"{incognito} : « Choisissez une arme. »"))
 
     print()
@@ -269,11 +269,11 @@ def launch_starters_scene(data):
 
     stop_sound(2000)
 
-    print(f"{incognito} : « Attention un ennemi a été repéré ! »")
+    print(f"{incognito} : « Attention un fragment a été repéré ! »")
     wait_input()
 
 def launch_tuto_fight(player):
-    tuto_enemy = Monster("Enemy gez", 200, Weapon("Epée de l'ennemi", 20, 0, 0, 0), 1)
+    tuto_enemy = Monster("Fragmentus tuto", 200, Weapon("Epée classique", 20, 0, 0, 0), 1)
     result = Fight(player, tuto_enemy, 0).fight_loop()
     return result
 
