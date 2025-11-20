@@ -178,7 +178,7 @@ class Fight:
         line_0 = f"\n NIVEAU {self.level}"
         line_1 = "=" * 5 + f"| {cyan}" + self.player.name + "'s turn" + "\033[0m |" + "="*(get_width()-16-len(self.player.name))
         line_2 = " "*left_offset + cyan + self.player.name.upper() + "\033[0m" + " "*(get_width()//2-len(self.player.name))
-        line_2 += red + "Fragmentus " + self.enemy.name.upper() + "\033[0m"
+        line_2 += red + "FRAGMENTUS " + self.enemy.name.upper() + "\033[0m"
         line_3 = " "*left_offset + pv_bar + " | " + str(self.player.pv) + "/" + str(self.player.max_pv) +" PV"
         if self.player.shield_pv > 0:
             line_3 += f" [Bouclier {self.player.shield_pv}PV]"
