@@ -87,6 +87,7 @@ def clear_save():
 
     clear_dict(data)
     data["used_monsters"] = []
+    data["cheat"] = False
 
     if "weapon_slot_4" in data["player"]["weapons_inv"]:
         del data["player"]["weapons_inv"]["weapon_slot_4"]

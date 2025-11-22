@@ -3,7 +3,7 @@ import random, json
 
 from global_func import *
 from musics import play_sound, stop_sound
-
+from object import MAX_INV_SIZE
 
 MAX_NAV_ITERATIONS = 30
 FADE_OUT = 2500 #ms
@@ -19,14 +19,15 @@ with open("JSON/cst_data.json", "r", encoding="utf-8") as read_file:
 
 
 class Fight:
-    def __init__(self, player, enemy, level=1):
+    def __init__(self, player, enemy, level=0, tuto=False):
         self.player = player
         self.enemy = enemy
         self.turn_count = 0
         self.weakness_turns_remaining = 0
         self.analysis_count = MAX_ANALYSIS
         self.level = level
-        self.txt_buffer = []
+        #self.txt_buffer = []
+        self.tuto = tuto
 
 
     def fight_loop(self):
@@ -57,12 +58,12 @@ class Fight:
                 play_sound("sword-finish")
                 time.sleep(1)
                 play_sound("win")
-                time.sleep(FADE_OUT/1000)
+                wait_input()
                 return gagne # Boléen
             elif gagne and p_turn_conclu != "Att":
                 stop_sound(FADE_OUT)
                 play_sound("win")
-                time.sleep(FADE_OUT/1000)
+                wait_input()
                 return gagne
 
 
@@ -78,11 +79,9 @@ class Fight:
 
 
     def player_turn(self):
-        self.player.mana = min(self.player.mana + 1, self.player.max_mana)
-
         instruction, value = self.nav(self.player)
 
-        if instruction == "Weapons":
+        if instruction == "Armes":
             equiped_w = self.player.weapons[value]
             self.player.weapon = equiped_w
 
@@ -96,29 +95,46 @@ class Fight:
             self.player.attack(self.enemy)
             self.player.charge(self.player.weapon.stim)
 
+            self.player.mana = min(self.player.mana + 1, self.player.max_mana)
             return "Att"
 
-        elif instruction == "Objects":
+        elif instruction == "Objets":
+            obj = self.player.inventory[value]
+            if obj.effect == "new_obj":
+                if self.player.mana < 3:
+                    print("Mana insuffisant")
+                    wait_input()
+                    return None
+                elif len(self.player.inventory) >= MAX_INV_SIZE:
+                    print("Inventaire plein")
+                    wait_input()
+                    return None
+
             action_check = self.player.use_obj(value)
             if action_check:
+                self.player.mana = min(self.player.mana + 1, self.player.max_mana)
                 return "Obj"
             else:
                 return None
 
-        elif instruction == "Analysis":
+        elif instruction == "Analyse":
             if self.analysis_count <= 0:
                 print("T'as trop spam la passivité mon gars")
                 wait_input()
                 return None
 
-            self.analysis_count-=1
+            self.analysis_count -= 1
 
             print(f"\nMeilleure compréhension : {self.find_weakness()}")
+
+            self.player.mana = min(self.player.mana + 1, self.player.max_mana)
             return "Ana"
 
         elif instruction == "Ultime":
             print("\nLa volonté des dieux vous accompagnent...")
             self.player.ult(self.enemy)
+
+            self.player.mana = min(self.player.mana + 1, self.player.max_mana)
             return "Ult"
 
         elif instruction == "sus":
@@ -196,14 +212,14 @@ class Fight:
         print(line_5)
 
         if self.weakness_turns_remaining > 0:
-            print(" "*left_offset + f" -Analysis actif pour {self.weakness_turns_remaining} tour(s)")
+            print(" "*left_offset + f" -Analyse actif pour {self.weakness_turns_remaining} tour(s)")
         else:
             self.enemy.weapon.power = self.enemy.weapon.original_power
         print()
 
-        if self.txt_buffer:
-            print("\n".join(self.txt_buffer))
-            print()
+        #if self.txt_buffer:
+        #    print("\n".join(self.txt_buffer))
+        #    print()
 
     def find_weakness(self):
         weakness = str(self.enemy.weakness)
@@ -231,10 +247,21 @@ class Fight:
 
 
     def nav(self, player):
-        nav_menu = ["Weapons", "Objects", "Analysis"]
+        can_att = any(i.mana <= player.mana for i in player.weapons)
+        can_obj = len(player.inventory) > 0
+        can_sac = player.mana > 2 and len(player.inventory) < MAX_INV_SIZE
+        can_ana = self.analysis_count > 0
+
+        can_play = can_att or can_obj or can_sac or can_ana or player.can_ult
+        nav_menu = ["Armes", "Objets", "Analyse"]
 
         if player.can_ult:
             nav_menu.append("Ultime")
+        elif not can_play:
+            nav_menu.append("Passer")
+
+        if self.tuto:
+            nav_menu.append("Info")
 
         current_pos = "Nav"
 
@@ -247,9 +274,9 @@ class Fight:
 
                     print("=" * 10 + "Menu" + "=" * 10)
                     for i, option in enumerate(nav_menu):
-                        if option == "Analysis":
+                        if option == "Analyse":
                             print(f"[{i + 1}] {option} ({self.analysis_count}/{MAX_ANALYSIS})")
-                        elif option == "Objects":
+                        elif option == "Objets":
                             print(f"[{i + 1}] {option} ({len(player.inventory)}/6)")
                         else:
                             print(f"[{i+1}] {option}")
@@ -259,10 +286,10 @@ class Fight:
                 action = int(solid_input(conf,to_display))-1
                 current_pos = nav_menu[action]
 
-            elif current_pos == "Weapons":
+            elif current_pos == "Armes":
                 def to_display():
                     self.display_status()
-                    print("="*15 + "Weapons" + "="*15)
+                    print("="*15 + "Armes" + "="*15)
 
                     max_len = max(len(w.name.replace('\033[0;93m', '').replace('\033[0m', '')) for w in player.weapons)
                     for i, option in enumerate(player.weapons):
@@ -278,15 +305,15 @@ class Fight:
                 if action == len(player.weapons):
                     current_pos = "Nav"
                 else:
-                    return "Weapons", action
+                    return "Armes", action
 
-            elif current_pos == "Objects":
+            elif current_pos == "Objets":
                 def to_display():
                     self.display_status()
-                    print("=" * 10 + "Objects" + "=" * 10)
+                    print("=" * 10 + "Objets" + "=" * 10)
 
                     for i, option in enumerate(player.inventory):
-                        effect = "Objet généré aléatoirement" if option.effect == "new_obj" \
+                        effect = "Objet généré aléatoirement pour 3 MANA" if option.effect == "new_obj" \
                             else f"Soin de {option.value} PV" if option.effect == "heal" \
                             else f"Arme améliorée de {option.value} Att" if option.effect == "att_boost" \
                             else f"Bouclier de {option.value} PV" if option.effect == "shield" \
@@ -305,13 +332,48 @@ class Fight:
                 if action == len(player.inventory):
                     current_pos = "Nav"
                 else:
-                    return "Objects", action
+                    return "Objets", action
 
-            elif current_pos == "Analysis":
-                return "Analysis", 0
+            elif current_pos == "Analyse":
+                return "Analyse", 0
 
             elif current_pos == "Ultime":
                 return "Ultime", 0
+
+            elif current_pos == "Info":
+                print("=" * 10 + "Vaincre des Fragmentus" + "=" * 10)
+                slow_print((
+                    "\nA chaque tour, vous pouvez exécuter une action :",
+                    "\n",
+                    "\n  1. Attaquer avec une arme en payant du mana.",
+                    "\n     Les attaques infligent des dégats et/ou chargent votre Ultime.",
+                    "\n     Tous les 5 niveaux, le joueur a la possiblité de recupérer une arme",
+                    "\n     plus efficace sur la carcasse d'un Boss."
+                    "\n",
+                    "\n  2. Utiliser un objet.",
+                    "\n     Seul le sac des abîmes coûte du mana pour l'utiliser mais en contrepartie",
+                    "\n     il génère aléatoirement un objet qui n'est pas déjà dans l'inventaire.",
+                    "\n     La taille de l'inventaire est fixée à 6.",
+                    "\n     A la fin de chaque combat vous recevrez un objet aléatoire s'il y a assez",
+                    "\n     de place dans votre inventaire."
+                    "\n     Les objets générés sont de plus en plus puissants avec les niveaux."
+                    "\n",
+                    "\n  3. Analyser l'ennemi.",
+                    "\n     Cette action expose une de ses faiblesses... ou pas",
+                    "\n",
+                    "\n  4. Ultime",
+                    "\n     Apparait lorsque la jauge d'Ult est complètement chargée."
+                    "\n     Attaque surpuissante qui est calculée comme une moyenne géométrique",
+                    "\n     de la puissance de toutes vos armes, fois un facteur multiplicatif.",
+                    "\n     Malheureusement la jauge d'Ult augmente à chaque niveau, ce qui",
+                    "\n     oblige le joueur à renouveler ses armes psychiques.",
+                    "\n",
+                    "\n  5. Passer",
+                    "\n     Dans le cas très rare où aucune autre action n'est possible... passez."
+                ),0.1)
+
+                wait_input()
+                current_pos = "Nav"
 
         print("Arrête de naviguer sans rien faire, reviens quand tu sauras prendre des décisions")
         return "sus", None # Au cas où un con naviguerait 1000 fois sans jouer

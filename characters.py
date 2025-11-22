@@ -19,7 +19,7 @@ class Character:
             return target.calc_dmg(self.weapon.power, self.weapon.name)
         else:
             target.pv = max(target.pv - self.weapon.power, 0)
-            print(f"""Arme "{cyan + self.weapon.name}\033[0m" inflige {self.weapon.power} dégats à {red + target.name}\033[0m ({target.pv} PV restants)""")
+            print(f"""Arme "{cyan + self.weapon.name}\033[0m" inflige {self.weapon.power} dégats à "{red + target.name}\033[0m" ({target.pv} PV restants)""")
             return None
 
 
@@ -48,7 +48,7 @@ class Player(Character):
             dgt = 1
             for weapon in self.weapons:
                 dgt *= max(weapon.power,1)
-            dgt = int(ULT_COEFFICIENT*(dgt**(1/3)))
+            dgt = int(ULT_COEFFICIENT*(dgt**(1/len(self.weapons))))
 
             target.pv = max(target.pv-dgt, 0)
             print(f"Vos armes s'unissent et attaquent de {dgt} dégats !")

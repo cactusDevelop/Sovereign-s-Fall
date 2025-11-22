@@ -32,6 +32,11 @@
             "level": 11
         },
         {
+            "nickname": "DEV",
+            "score": 400,
+            "level": 6
+        },
+        {
             "nickname": "Cactusdev",
             "score": 300,
             "level": 5
@@ -45,11 +50,6 @@
             "nickname": "Thogrul",
             "score": 300,
             "level": 5
-        },
-        {
-            "nickname": "Cactusdev",
-            "score": 220,
-            "level": 4
         }
     ]
 }

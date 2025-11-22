@@ -7,6 +7,7 @@ from json_manager import *
 from global_func import *
 from musics import play_sound, stop_sound
 from online_highscores_hors_projet import get_online_highscore, get_online_leaderboard
+from scenes import launch_cutscene, launch_starters_scene, launch_tuto_fight, game_over
 
 
 CHEAT_CODE = "zahoe"
@@ -122,11 +123,13 @@ def show_hs():  # [BALISE ONLINE HIGHSCORES]
 
 # CUTSCENE
 def run_intro():
-    from scenes import launch_cutscene, launch_starters_scene, launch_tuto_fight, game_over
-
+    if data.get("seed") is None:
+        data["seed"] = int((random.getstate()[1][0]*time.time())%67676767)
+        random.seed(data["seed"])
     data["player"]["score"] = 0
     data["player"]["current_level"] = 0
     data["used_monsters"] = []
+    data["cheat"] = False
 
     if not launch_cutscene(data):
         game_over(data,1,"Tié mort vite")
@@ -211,8 +214,9 @@ if __name__ == "__main__":
 
             if seed != 0:
                 random.seed(seed)
-                print(f"[SEEDED] /{seed}/")
-                time.sleep(1)
+                data["seed"] = seed
+                print(f"[SEEDED RUN] /{seed}/")
+                time.sleep(2)
 
                 import scenes
                 scenes.starters = None

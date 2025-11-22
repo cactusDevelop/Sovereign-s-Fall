@@ -24,10 +24,18 @@ OBJ_STARTER = Object("Sac des abîmes", "new_obj", 0)
 CHEAT_WEAPON = Weapon("Mange tes morts", 999, 999, 0, 0)
 
 # EQUILIBRAGE
-PLAYER_SCALE = 1.15
-MONSTER_SCALE = 1.2
-BOSS_PV = 5
-BOSS_ATT = 2
+PLAYER_I_PV = 100
+PLAYER_I_MANA = 10
+PLAYER_I_ULT = 200
+PLAYER_SCALE = 1.16
+
+MONSTER_I_PV = 200
+MONSTER_I_POWER = 10
+MONSTER_SCALE = 1.18
+
+BOSS_I_PV = 200
+BOSS_I_POWER = 15
+BOSS_SCALE = 1.20
 
 with open("JSON/cst_data.json", "r", encoding="utf-8") as read_file:
     cst = json.load(read_file)
@@ -59,12 +67,14 @@ def game_over(data,x:int,des:str):
     clear_console()
     stop_sound(1000)
 
+    seed = data["seed"]
     nickname = data["player"]["nickname"]
     score = data["player"]["score"]
     level = data["player"]["current_level"]
+    is_cheating = data.get("cheat", False)
 
     test_high = False
-    if score > 0:
+    if score > 0 and not is_cheating:
         new_hs = save_score_with_fallback(nickname, score, level, save_hs) # [BALISE ONLINE HIGHSCORES]
         test_high = (score == new_hs)
 
@@ -72,12 +82,14 @@ def game_over(data,x:int,des:str):
     print(f"\033[1m  GAME OVER\033[0;7m" + " "*(get_width()-11))
     print(f"  Fin {x} - {des}" + " " * (get_width()-9-len(str(x))-len(des)))
     print(f"  Score - {score}" + " " * (get_width()-9-len(str(x))-len(str(score))))
-
+    print(f"  Seed - {seed}" + " "*(get_width()-9-len(str(seed))))
+    if is_cheating:
+        print("  Pas de gloire aux tricheurs, score perdu !" + " "*(get_width()-45))
     if test_high:
         print(f" >>> NEW HIGHSCORE <<<" + " "*(get_width()-22))
-
     print(" " * get_width() + "\n" + " " * get_width())
     print("=" * get_width() + "\033[0m")
+
     #dump_json(data)
     clear_save()
     input("\nAppuyez sur ENTER pour revenir à l'écran d'accueil")
@@ -273,8 +285,8 @@ def launch_starters_scene(data):
     wait_input()
 
 def launch_tuto_fight(player):
-    tuto_enemy = Monster("Fragmentus tuto", 200, Weapon("Epée classique", 20, 0, 0, 0), 1)
-    result = Fight(player, tuto_enemy, 0).fight_loop()
+    tuto_enemy = Monster("Tuto", 200, Weapon("Épée classique", 10, 0, 0, 0), 1)
+    result = Fight(player, tuto_enemy, 0, True).fight_loop()
     return result
 
 def launch_keep_fighting(difficulty, player, used_monsters):
@@ -285,12 +297,12 @@ def launch_keep_fighting(difficulty, player, used_monsters):
     is_bossfight = (difficulty % 5 == 0 and difficulty != 0)
 
     if is_bossfight:
-        print("BOSSFIGHT TXT")
-        wait_input()
+        print("\nBoss puissant en approche !")
         boss_name = f"BOSS {random.choice(BOSS_NAMES).upper()}"
-        player_legend = sum(i.power for i in player.weapons)
-        boss_pv = int(player.max_pv*BOSS_PV)
-        boss_power = int(player_legend*BOSS_ATT)
+
+        boss_pv = int(BOSS_I_PV*BOSS_SCALE**difficulty)
+        boss_power = int(BOSS_I_POWER*BOSS_SCALE**difficulty)
+
         boss_weapon = Weapon("Arme très puissante", boss_power, 0, 0, 0)
         new_enemy = Monster(boss_name, boss_pv, boss_weapon, 0)
 
@@ -312,18 +324,18 @@ def launch_keep_fighting(difficulty, player, used_monsters):
 
         new_enemy_name = random.choice(available_enemies)
         used_monsters.append(new_enemy_name)
-        new_enemy_pv = int(200*MONSTER_SCALE**difficulty)
+        new_enemy_pv = int(MONSTER_I_PV*MONSTER_SCALE**difficulty)
         new_weapon_name = random.choice(WEAPON_NAMES)
-        new_weapon_power = int(10*MONSTER_SCALE**difficulty)
+        new_weapon_power = int(MONSTER_I_POWER*MONSTER_SCALE**difficulty)
         new_weakness = random.choice(list(WEAKNESSES.keys()))
 
         new_enemy = Monster(new_enemy_name, new_enemy_pv, Weapon(new_weapon_name, new_weapon_power, 0, 0, 0), new_weakness)
 
-        player.max_pv = int(100*PLAYER_SCALE**difficulty)
+        player.max_pv = int(PLAYER_I_PV*PLAYER_SCALE**difficulty)
         player.pv = player.max_pv
-        player.max_mana = int(10*PLAYER_SCALE**difficulty)
+        player.max_mana = int(PLAYER_I_MANA*PLAYER_SCALE**difficulty)
         player.mana = player.max_mana
-        player.max_stim = int(200*PLAYER_SCALE**difficulty)
+        player.max_stim = int(PLAYER_I_ULT*PLAYER_SCALE**difficulty)
 
     # START FIGHTIN'
     result = Fight(player, new_enemy, difficulty).fight_loop()
@@ -341,8 +353,8 @@ def launch_keep_fighting(difficulty, player, used_monsters):
             def to_display():
                 print("Choisir une arme à jeter :")
                 for i, weapon in enumerate(player.weapons):
-                    print(f"[{i+1}] {weapon.name} (Att: {weapon.power}, Ult: {weapon.stim}, Mana: {weapon.mana})")
-                print(f"[{len(player.weapons)+1}] {b_weapon.name} (Att: {b_weapon.power}, Ult: {b_weapon.stim}, Mana: {b_weapon.mana})")
+                    print(f"[{i+1}] {weapon.name} (Att: {weapon.power}, Ult: {weapon.stim}, Mana: {weapon.mana}, Buffs: {weapon.buff_count})")
+                print(f"[{len(player.weapons)+1}] {b_weapon.name} (Att: {b_weapon.power}, Ult: {b_weapon.stim}, Mana: {b_weapon.mana}, Buffs: 0)")
             def conf(action_input):
                 return action_input.isdigit() and 0 < int(action_input) <= len(player.weapons) +1
 

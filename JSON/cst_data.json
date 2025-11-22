@@ -32,22 +32,23 @@
     "Examen ISA"
   ],
   "object_blueprints": [
-    ["Petite popo de soin", "heal", 30, 60, 0.175],
+    ["Petite popo de soin", "heal", 30, 50, 0.175],
     ["Grande popo de soin", "heal", 60, 120, 0.075],
     ["Buff instant", "att_boost", 20, 40, 0.175],
-    ["Buff divin", "att_boost", 40, 80, 0.075],
+    ["Buff divin", "att_boost", 40, 80, 0.065],
     ["P'tit bouclier", "shield", 20, 40, 0.175],
     ["Ama-no-Iwato", "shield", 40, 80, 0.075],
-    ["Vol-au-vent", "mana_ult_charge", 5, 10, 0.175],
-    ["Carbonade", "mana_ult_charge", 10, 20, 0.075]
+    ["Vol-au-vent", "mana_ult_charge", 2, 5, 0.175],
+    ["Carbonade", "mana_ult_charge", 5, 10, 0.075],
+    ["Buff d'Euler", "att_mult", 1.1, 2, 0.01]
   ],
   "rand_lines": [
     "Tu t'enfonces dans les ténèbres à la recherche de réponses...",
     "Tu t'allumes une clope et te rappelles que tu ne fumes pas...",
     "Tu sous-estimes le temps de prépa du prochain labo...",
     "Tu te demandes combien de temps le roi tiendra-t-il...",
-    "Tu t'étonne de la simplicité du cortex cérébrale de votre hôte",
-    "Tutedigire, tuteu ridiges euh..."
+    "Tu t'étonnes de la simplicité du cortex cérébrale de votre hôte",
+    "Tutedigire, tuteu rigides euh..."
   ],
   "weaknesses": {
     "0": {

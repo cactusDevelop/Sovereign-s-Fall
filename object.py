@@ -10,8 +10,8 @@ with open("JSON/cst_data.json", "r", encoding="utf-8") as read_file:
     OBJECT_BLUEPRINTS = cst_data.get("object_blueprints", [])
 
 MAX_INV_SIZE = 6
-OBJECT_SCALE = 1.15
-OBJECT_SCALE_SLOWDOWN = 2
+OBJECT_SCALE = 1.17
+OBJECT_SCALE_SLOWDOWN = 0.8 # became speed up instead of slowdown
 
 class Object:
     def __init__(self, name: str, effect: str, value):
@@ -21,21 +21,12 @@ class Object:
 
     def use(self, player): # Ajouter un para enemy=None si un obj a des effets sur enemy
         if self.effect == "new_obj":
-            if player.mana < 3:
-                print("Pas assez de MANA")
-                return False # Return sert à rien
-
-            elif len(player.inventory) >= MAX_INV_SIZE:
-                print("Inventaire plein...")
-                return True
-
-            else:
-                player.mana -= 3
-                new_object = rand_obj_inv(player.inventory)
-                #print(f"[DEBUG] rand_obj() : {new_object}")
-                player.inventory.append(new_object)
-                print(f""""{self.name}" a invoqué l'objet "{new_object.name}" """)
-                return True
+            player.mana -= 3
+            new_object = rand_obj_inv(player.inventory)
+            #print(f"[DEBUG] rand_obj() : {new_object}")
+            player.inventory.append(new_object)
+            print(f""""{self.name}" a invoqué l'objet "{new_object.name}" """)
+            return True
 
         elif self.effect == "heal":
             delta_pv = min(self.value, player.max_pv-player.pv)
@@ -43,11 +34,12 @@ class Object:
             print(f"{self.name} régénère {delta_pv} PV")
             return True
 
-        elif self.effect == "att_boost":
+        elif self.effect == "att_boost" or self.effect == "att_mult":
             def to_display():
                 print("\n" + "="*10 + "Arme à améliorer" + "="*10)
                 for i, weapon in enumerate(player.weapons):
-                    print(f"[{i+1}] {weapon.name} (Att: {weapon.power})")
+                    remaining = weapon.MAX_BUFFS - weapon.buff_count
+                    print(f"[{i+1}] {weapon.name} (Att: {weapon.power}, Buffs restants: {remaining}/{weapon.MAX_BUFFS})")
                 print(f"[{len(player.weapons)+1}] Retour")
             def conf(action_input):
                 return action_input.isdigit() and 0 < int(action_input) <= len(player.weapons) + 1
@@ -64,9 +56,15 @@ class Object:
                 print(f"{self.name} ne peut plus être amélioré")
                 return False
             else:
-                player.weapons[which_one].add_buff(self.value)
-                print(f"{self.name} augmente la puissance de {player.weapons[int(which_one)-1].name} de {self.value}")
-                print(f"{player.weapons[which_one].buff_count}/{player.weapons[int(which_one)-1].MAX_BUFFS} utilisé(s) sur cette arme")
+                if self.effect == "att_boost":
+                    boost = self.value
+                else:
+                    boost = int((self.value-1)*player.weapons[which_one].power)
+
+                player.weapons[which_one].add_buff(boost)
+                remaining = player.weapons[which_one].MAX_BUFFS - player.weapons[which_one].buff_count
+                print(f"""{self.name} augmente la puissance de "{player.weapons[which_one].name}" de {boost}""")
+                print(f"{remaining}/{player.weapons[int(which_one)].MAX_BUFFS} utilisable(s) sur cette arme")
                 return True
 
         elif self.effect == "shield":

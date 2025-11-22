@@ -1,35 +1,35 @@
 {
     "player": {
-        "nickname": "Joueur44",
-        "pv": 20,
-        "max_pv": 132,
-        "stim": 264,
-        "max_stim": 264,
+        "nickname": "noob",
+        "pv": 61,
+        "max_pv": 181,
+        "stim": 0,
+        "max_stim": 362,
         "mana": 10,
         "max_mana": 10,
-        "current_level": 3,
-        "score": 160,
+        "current_level": 6,
+        "score": 300,
         "weapons_inv": {
             "weapon_slot_1": {
-                "name": "Ielstrr",
-                "power": 60,
-                "stim": 80,
-                "mana": 4,
-                "buff_count": 0
+                "name": "Enseer",
+                "power": 197,
+                "stim": 40,
+                "mana": 3,
+                "buff_count": 3
             },
             "weapon_slot_2": {
-                "name": "Gehpeed",
-                "power": 80,
-                "stim": 50,
-                "mana": 3,
+                "name": "\u001b[0;93mNFIO\u001b[0m",
+                "power": 50,
+                "stim": 120,
+                "mana": 5,
                 "buff_count": 0
             },
             "weapon_slot_3": {
-                "name": "Yvys",
-                "power": 130,
-                "stim": 80,
-                "mana": 5,
-                "buff_count": 2
+                "name": "Yeuelsy",
+                "power": 60,
+                "stim": 70,
+                "mana": 3,
+                "buff_count": 0
             }
         },
         "objects_inv": {
@@ -39,20 +39,34 @@
                 "value": 0
             },
             "object_slot_2": {
-                "name": "Vol-au-vent",
+                "name": "Carbonade",
                 "effect": "mana_ult_charge",
-                "value": 8
+                "value": 9
             },
             "object_slot_3": {
+                "name": "P'tit bouclier",
+                "effect": "shield",
+                "value": 28
+            },
+            "object_slot_4": {
+                "name": "Grande popo de soin",
+                "effect": "heal",
+                "value": 106
+            },
+            "object_slot_5": {
                 "name": "Petite popo de soin",
                 "effect": "heal",
-                "value": 82
+                "value": 93
             }
         }
     },
     "used_monsters": [
-        "Loulou Croix-V-Baton",
-        "Le reuf de Dimitri"
+        "Thom-arabe",
+        "Boegart Hangar",
+        "Dimitri la Perdrix",
+        "Louis VII",
+        "Ken le survivant"
     ],
-    "cheat": null
+    "cheat": false,
+    "seed": 51012063
 }
