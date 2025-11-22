@@ -58,7 +58,7 @@ CONFIG = load_config()
 # Si pas de config, les fonctions fonctionneront en mode local uniquement
 GITHUB_TOKEN = CONFIG.get("github_token") if CONFIG else None
 GITHUB_REPO = CONFIG.get("github_repo") if CONFIG else None
-FILE_PATH = "../JSON/highscores.json"
+FILE_PATH = "JSON/highscores.json"
 
 API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{FILE_PATH}" if GITHUB_REPO else None
 
