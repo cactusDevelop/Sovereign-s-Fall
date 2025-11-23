@@ -1,71 +1,46 @@
 {
     "player": {
-        "nickname": null,
-        "pv": null,
-        "max_pv": null,
-        "stim": null,
-        "max_stim": null,
-        "mana": null,
-        "max_mana": null,
-        "current_level": null,
-        "score": null,
+        "nickname": "Joueur27",
+        "pv": 100,
+        "max_pv": 100,
+        "stim": 100,
+        "max_stim": 200,
+        "mana": 10,
+        "max_mana": 10,
+        "current_level": 0,
+        "score": 0,
         "weapons_inv": {
             "weapon_slot_1": {
-                "name": null,
-                "power": null,
-                "stim": null,
-                "mana": null,
-                "buff_count": null
+                "name": "Deiy",
+                "power": 60,
+                "stim": 90,
+                "mana": 5,
+                "buff_count": 0
             },
             "weapon_slot_2": {
-                "name": null,
-                "power": null,
-                "stim": null,
-                "mana": null,
-                "buff_count": null
+                "name": "Savdkz",
+                "power": 30,
+                "stim": 100,
+                "mana": 3,
+                "buff_count": 0
             },
             "weapon_slot_3": {
-                "name": null,
-                "power": null,
-                "stim": null,
-                "mana": null,
-                "buff_count": null
+                "name": "Ueiay",
+                "power": 40,
+                "stim": 100,
+                "mana": 4,
+                "buff_count": 0
             }
         },
         "objects_inv": {
             "object_slot_1": {
-                "name": null,
-                "effect": null,
-                "value": null
-            },
-            "object_slot_2": {
-                "name": null,
-                "effect": null,
-                "value": null
-            },
-            "object_slot_3": {
-                "name": null,
-                "effect": null,
-                "value": null
-            },
-            "object_slot_4": {
-                "name": null,
-                "effect": null,
-                "value": null
-            },
-            "object_slot_5": {
-                "name": null,
-                "effect": null,
-                "value": null
-            },
-            "object_slot_6": {
-                "name": null,
-                "effect": null,
-                "value": null
+                "name": "Sac des abîmes",
+                "effect": "new_obj",
+                "value": 0
             }
         }
     },
     "used_monsters": [],
     "cheat": false,
-    "seed": null
+    "seed": 29997171
 }

@@ -35,6 +35,10 @@ def display_menu():
             play_sound("menu", True)
         print("\n" + "="*5 + "| \033[1mMAIN MENU\033[0m |" + "="*(get_width()-18))
 
+        if data.get("cheat", False):
+            print("\n\033[42m >>> MODE CHEAT ACTIF <<< \033[0m")
+            print("*Nouvelle partie sans cheat*")
+
         try:   # [BALISE ONLINE HIGHSCORES]
             online_hs = get_online_highscore()
             if online_hs > 0:
@@ -54,7 +58,7 @@ def display_menu():
         print("\n [1] Nouvelle Partie")
         print(f" [2] Charger Une Partie")
         print(" [3] Classement")
-        print(" [4] Dev Mode")
+        print(" [4] Seeded run")
         print(" [0] Quitter :‹")
 
     def conf_m(action_input):
@@ -64,10 +68,13 @@ def display_menu():
     direc = solid_input(conf_m, to_display_m)
 
     if direc == CHEAT_CODE:
-        print("\n\033[42m >>> CHEAT MODE ACTIVED <<< \033[0m")
+        print("\n\033[42m >>> CHEAT MODE ACTIF <<< \033[0m")
         play_sound("win")
         time.sleep(2.5)
         data["cheat"] = True
+        with open("JSON/active_data.json", "w", encoding="utf-8") as write_file:
+            json.dump(data, write_file, indent=4, ensure_ascii=False)
+
         return 1
 
     return int(direc)
@@ -125,13 +132,18 @@ def show_hs():  # [BALISE ONLINE HIGHSCORES]
 
 # CUTSCENE
 def run_intro():
+    is_cheating = data.get("cheat", False)
+
     if data.get("seed") is None:
         data["seed"] = int((random.getstate()[1][0]*time.time())%67676767)
         random.seed(data["seed"])
+
     data["player"]["score"] = 0
     data["player"]["current_level"] = 0
+    data["player"]["weapons_inv"] = {}
+    data["player"]["objects_inv"] = {}
     data["used_monsters"] = []
-    data["cheat"] = False
+    data["cheat"] = is_cheating
 
     if not launch_cutscene(data):
         game_over(data,1,"Tié mort vite")
@@ -160,8 +172,10 @@ def run_intro():
 
 def run_fight_loop():
     from scenes import launch_keep_fighting, game_over
+    from fight import MAX_ANALYSIS
 
     fighting = True
+    max_analysis = MAX_ANALYSIS # pour initialiser seulement
 
     while fighting:
         player = get_player_data()
@@ -193,6 +207,10 @@ if __name__ == "__main__":
             time.sleep(1.7)
             running = False
         if menu_to == 1:
+            data["cheat"] = False
+            data["seed"] = None
+            with open("JSON/active_data.json", "w", encoding="utf-8") as write_file:
+                json.dump(data, write_file, indent=4, ensure_ascii=False)
             run_intro()
         elif menu_to == 2:
             if not saved_game():
@@ -228,3 +246,4 @@ if __name__ == "__main__":
                 run_intro()
             else:
                 continue
+                

@@ -7,8 +7,12 @@ from object import MAX_INV_SIZE
 
 MAX_NAV_ITERATIONS = 30
 FADE_OUT = 2500 #ms
-MAX_ANALYSIS = 4
 MISS_CHANCE = 0.05
+HEAL_CHANCE = 0.05
+HEAL_AMOUNT = 0.1
+MAX_ANALYSIS = 4
+MAX_WEAPON_SLOTS = 3
+
 red = "\033[1;31m"
 blue = "\033[0;34m"
 cyan = "\033[1;36m"
@@ -19,18 +23,30 @@ with open("JSON/cst_data.json", "r", encoding="utf-8") as read_file:
 
 
 class Fight:
-    def __init__(self, player, enemy, level=0, tuto=False):
+    def __init__(self, player, enemy, level=0, max_analysis=MAX_ANALYSIS, tuto=False):
+        """
+
+        :param player: Instance du joueur
+        :param enemy: Instance de l'ennemi ou boss affronté
+        :param level: Niveau actuel
+        :param max_analysis: Nombre analyses dispo
+        :param tuto: Si premier niveau alors afficher "4) Info"
+        """
         self.player = player
         self.enemy = enemy
         self.turn_count = 0
         self.weakness_turns_remaining = 0
-        self.analysis_count = MAX_ANALYSIS
+        self.analysis_count = max_analysis
         self.level = level
         #self.txt_buffer = []
         self.tuto = tuto
 
 
     def fight_loop(self):
+        """
+        Boucle de combat
+        :return: si gagné ou perdu
+        """
         print(f"\n{cyan}{self.player.name}\033[0m engage le combat contre {red}{self.enemy.name}\033[0m")
         wait_input()
         play_sound("fight", True)
@@ -59,7 +75,7 @@ class Fight:
                 time.sleep(1)
                 play_sound("win")
                 wait_input()
-                return gagne # Boléen
+                return gagne
             elif gagne and p_turn_conclu != "Att":
                 stop_sound(FADE_OUT)
                 play_sound("win")
@@ -74,7 +90,7 @@ class Fight:
                 time.sleep(1)
                 play_sound("laughter")
                 time.sleep(FADE_OUT/1000-1)
-                return gagne # Idem Boléen
+                return gagne
 
 
 
@@ -151,6 +167,10 @@ class Fight:
         if random.random() < MISS_CHANCE or self.enemy.weapon.power == 0:
             play_sound("miss-swing")
             print(f""""{red+ self.enemy.name}\033[0m" rate lamentablement son attaque""")
+        elif random.random() < HEAL_CHANCE:
+            self.enemy.pv = min(self.enemy.pv + int(self.enemy.max_pv*HEAL_AMOUNT), self.enemy.max_pv)
+            play_sound("bell")
+            print(f""""{red+ self.enemy.name}\033[0m" se régène partiellement""")
         else:
             self.enemy.attack(self.player)
 
@@ -215,6 +235,7 @@ class Fight:
             print(" "*left_offset + f" -Analyse actif pour {self.weakness_turns_remaining} tour(s)")
         else:
             self.enemy.weapon.power = self.enemy.weapon.original_power
+            self.enemy.nerf_defense = 1.0
         print()
 
         #if self.txt_buffer:
@@ -240,6 +261,11 @@ class Fight:
 
         elif w_type == "heal":
             self.player.heal(w_value)
+            return w_message
+
+        elif w_type == "defense":
+            self.enemy.nerf_defense = w_value
+            self.weakness_turns_remaining = w_duration + 1
             return w_message
 
         else:
@@ -277,7 +303,7 @@ class Fight:
                         if option == "Analyse":
                             print(f"[{i + 1}] {option} ({self.analysis_count}/{MAX_ANALYSIS})")
                         elif option == "Objets":
-                            print(f"[{i + 1}] {option} ({len(player.inventory)}/6)")
+                            print(f"[{i + 1}] {option} ({len(player.inventory)}/{MAX_INV_SIZE})")
                         else:
                             print(f"[{i+1}] {option}")
                 def conf(action_input):
@@ -376,5 +402,5 @@ class Fight:
                 current_pos = "Nav"
 
         print("Arrête de naviguer sans rien faire, reviens quand tu sauras prendre des décisions")
-        return "sus", None # Au cas où un con naviguerait 1000 fois sans jouer
+        return "sus", None
 

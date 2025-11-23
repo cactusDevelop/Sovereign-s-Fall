@@ -65,13 +65,19 @@
       "type": "heal",
       "value": 10,
       "duration": 0,
-      "message": "Ennemi te guéri 10 PV ?!"
+      "message": "Ennemi te guérit de 10 PV ?!"
     },
     "3": {
       "type": "attack",
       "value": 1000,
       "duration": 2,
       "message": "Ennemi étourdi pour 2 tours"
+    },
+    "4": {
+      "type": "defense",
+      "value": 1.5,
+      "duration": 3,
+      "message": "Ennemi est plus vulnérable pour 3 tours"
     }
   }
 }

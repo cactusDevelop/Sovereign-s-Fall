@@ -7,7 +7,7 @@ from musics import play_sound, stop_sound
 from characters import Monster
 from weapon import Weapon, gen_boss_weapon
 from object import Object, enemy_loot, MAX_INV_SIZE
-from fight import Fight
+from fight import Fight, MAX_ANALYSIS
 from global_func import *
 from online_highscores_hors_projet import save_score_with_fallback
 
@@ -103,9 +103,12 @@ def launch_cutscene(data):
     time.sleep(1.7)
     play_sound("tense-bgm", True)
 
+    seed = data.get("seed")
+
     print((
         f"\n{green}"
         "\n *sauvegarde auto*"
+        f"\n seed : {seed}"
         "\n"
         "\n          ⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷"
         "\n   ⠀⠀⠀⠀ ⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
@@ -224,7 +227,7 @@ def launch_starters_scene(data):
 
     quick_print((
                 f"\n {cyan + nickname}\033[0m : « ... Qu’est que... Où suis-je tombé ? »",
-                "\nDevant vous, se trouve plusieurs armes difformes éparpillées sur le sol.",
+                "\nDevant vous, se trouvent plusieurs armes difformes éparpillées sur le sol.",
                 f"\n{incognito} : « Bienvenue dans la tête du Roi, agent {nickname} »",
                 f"{incognito} : « Votre objectif sera de le {red}TuER\033[0m »",
                 f"{incognito} : « Pour ce faire, détruisez les fragments de son esprit que vous rencontrerez »",
@@ -289,7 +292,15 @@ def launch_tuto_fight(player):
     result = Fight(player, tuto_enemy, 0, True).fight_loop()
     return result
 
-def launch_keep_fighting(difficulty, player, used_monsters):
+def launch_keep_fighting(difficulty, player, used_monsters, max_analysis=MAX_ANALYSIS):
+    """
+
+    :param max_analysis:
+    :param difficulty:
+    :param player:
+    :param used_monsters:
+    :return:
+    """
     clear_console()
     stop_sound(1000)
 
@@ -298,6 +309,7 @@ def launch_keep_fighting(difficulty, player, used_monsters):
 
     if is_bossfight:
         print("\nBoss puissant en approche !")
+        print(f"\nAttention ! La puissance du boss affecte votre régénération.")
         boss_name = f"BOSS {random.choice(BOSS_NAMES).upper()}"
 
         boss_pv = int(BOSS_I_PV*BOSS_SCALE**difficulty)
@@ -310,7 +322,6 @@ def launch_keep_fighting(difficulty, player, used_monsters):
         player.max_pv = int(PLAYER_I_PV*PLAYER_SCALE**difficulty)
         player.pv = int(player.max_pv//(4/3))
         player.mana = player.max_mana//2
-
     else:
         print()
         print(random.choice(RANDOM_LINES))
@@ -372,7 +383,6 @@ def launch_keep_fighting(difficulty, player, used_monsters):
 
             wait_input()
 
-
         else:
             if len(player.inventory) >= MAX_INV_SIZE:
                 print("Inventaire plein, pas de loot")
@@ -383,4 +393,46 @@ def launch_keep_fighting(difficulty, player, used_monsters):
                 print(f"""\n L'ennemi a laissé tomber "{loot.name}" (Effet: {loot.effect} {loot.value})""")
                 wait_input()
 
-    return result
+        max_analysis = offer_upgrades(player, difficulty, max_analysis)
+
+    return result, max_analysis
+
+def offer_upgrades(player, level, max_analysis):
+    """
+    La fonction de Progression demandée dans le cahier des charges
+    :param player: Instance joueur
+    :param level: Niveau atteint
+    :param max_analysis: Max d'analyses actuel
+    :return: max_analysis (joueur mis à jour)
+    """
+
+    clear_console()
+    play_sound("bell")
+
+    def to_display():
+        weapon_slots = len(player.weapons)
+        obj_slots = len(player.inventory)
+        print("\n" + "="*20 + "| AMÉLIORATION |" + "="*20)
+        print(f"[1] Capacité d'armes +1 ({weapon_slots} -> {weapon_slots+1})")
+        print(f"[2] Capacité d'objets +1 ({obj_slots} -> {obj_slots+1})")
+        print(f"[3] Capacité d'analyses +2 ({max_analysis} -> {max_analysis+2})")
+    def conf(action_input):
+        return action_input.isdigit() and 0 < int(action_input) <= 3
+
+    choice = int(solid_input(conf, to_display))
+    if choice == 1:
+        print("\nSlot d'arme supplémentaire !")
+        wait_input()
+        return max_analysis
+
+    elif choice == 2:
+        import object as obj
+        print("\nSlot d'objet supplémentaire !")
+        obj.MAX_INV_SIZE += 1
+        wait_input()
+        return max_analysis
+
+    elif choice == 3:
+        print("\nNombre d'analyses augmenté !")
+        wait_input()
+        return max_analysis + 2

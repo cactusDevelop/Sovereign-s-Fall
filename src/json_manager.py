@@ -27,7 +27,7 @@ def save_hs(nickname, score, level):
 
 # SAVED VARIABLES
 with open("JSON/active_data.json", "r", encoding="utf-8") as read_file:
-    data = json.load(read_file) # Au début je changeais tout en temps réel et crachais sur json parce que c'est éclaté mais en réalité il ne fallait juste pas l'uiliser de cette manière, désormais mon âme est en paix
+    data = json.load(read_file)
 
 def save_game(new_player, level=1, used_monsters=None):
     data["player"]["nickname"] = new_player.name
