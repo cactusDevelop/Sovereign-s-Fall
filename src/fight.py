@@ -13,7 +13,7 @@ red = "\033[1;31m"
 blue = "\033[0;34m"
 cyan = "\033[1;36m"
 
-with open("../JSON/cst_data.json", "r", encoding="utf-8") as read_file:
+with open("JSON/cst_data.json", "r", encoding="utf-8") as read_file:
     cst = json.load(read_file)
     WEAKNESSES = cst.get("weaknesses", {})
 

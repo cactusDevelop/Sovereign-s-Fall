@@ -5,7 +5,7 @@ import json
 
 from global_func import solid_input
 
-with open("../JSON/cst_data.json", "r", encoding="utf-8") as read_file:
+with open("JSON/cst_data.json", "r", encoding="utf-8") as read_file:
     cst_data = json.load(read_file)
     OBJECT_BLUEPRINTS = cst_data.get("object_blueprints", [])
 

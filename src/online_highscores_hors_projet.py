@@ -32,7 +32,7 @@ import os
 # CHARGEMENT SÉCURISÉ DE LA CONFIGURATION
 def load_config():
     """Charge la config depuis config.json (ignoré par git)"""
-    config_path = "../JSON/config.json"
+    config_path = "JSON/config.json"
 
     if not os.path.exists(config_path):
         print("[INFO] Aucune configuration trouvée - Mode local uniquement")

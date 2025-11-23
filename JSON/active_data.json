@@ -1,72 +1,71 @@
 {
     "player": {
-        "nickname": "noob",
-        "pv": 61,
-        "max_pv": 181,
-        "stim": 0,
-        "max_stim": 362,
-        "mana": 10,
-        "max_mana": 10,
-        "current_level": 6,
-        "score": 300,
+        "nickname": null,
+        "pv": null,
+        "max_pv": null,
+        "stim": null,
+        "max_stim": null,
+        "mana": null,
+        "max_mana": null,
+        "current_level": null,
+        "score": null,
         "weapons_inv": {
             "weapon_slot_1": {
-                "name": "Enseer",
-                "power": 197,
-                "stim": 40,
-                "mana": 3,
-                "buff_count": 3
+                "name": null,
+                "power": null,
+                "stim": null,
+                "mana": null,
+                "buff_count": null
             },
             "weapon_slot_2": {
-                "name": "\u001b[0;93mNFIO\u001b[0m",
-                "power": 50,
-                "stim": 120,
-                "mana": 5,
-                "buff_count": 0
+                "name": null,
+                "power": null,
+                "stim": null,
+                "mana": null,
+                "buff_count": null
             },
             "weapon_slot_3": {
-                "name": "Yeuelsy",
-                "power": 60,
-                "stim": 70,
-                "mana": 3,
-                "buff_count": 0
+                "name": null,
+                "power": null,
+                "stim": null,
+                "mana": null,
+                "buff_count": null
             }
         },
         "objects_inv": {
             "object_slot_1": {
-                "name": "Sac des abîmes",
-                "effect": "new_obj",
-                "value": 0
+                "name": null,
+                "effect": null,
+                "value": null
             },
             "object_slot_2": {
-                "name": "Carbonade",
-                "effect": "mana_ult_charge",
-                "value": 9
+                "name": null,
+                "effect": null,
+                "value": null
             },
             "object_slot_3": {
-                "name": "P'tit bouclier",
-                "effect": "shield",
-                "value": 28
+                "name": null,
+                "effect": null,
+                "value": null
             },
             "object_slot_4": {
-                "name": "Grande popo de soin",
-                "effect": "heal",
-                "value": 106
+                "name": null,
+                "effect": null,
+                "value": null
             },
             "object_slot_5": {
-                "name": "Petite popo de soin",
-                "effect": "heal",
-                "value": 93
+                "name": null,
+                "effect": null,
+                "value": null
+            },
+            "object_slot_6": {
+                "name": null,
+                "effect": null,
+                "value": null
             }
         }
     },
-    "used_monsters": [
-        "Thom-arabe",
-        "Boegart Hangar",
-        "Dimitri la Perdrix",
-        "Louis VII",
-        "Ken le survivant"
-    ],
+    "used_monsters": [],
     "cheat": false,
-    "seed": 51012063
+    "seed": null
 }

@@ -7,9 +7,9 @@ from object import Object
 
 
 # CONSTANTS
-with open("../JSON/cst_data.json", "r", encoding="utf-8") as read_cst:
+with open("JSON/cst_data.json", "r", encoding="utf-8") as read_cst:
     cst = json.load(read_cst)
-with open("../JSON/highscores.json", "r", encoding="utf-8") as read_hs:
+with open("JSON/highscores.json", "r", encoding="utf-8") as read_hs:
     hs = json.load(read_hs)
 
 def get_cst_names():
@@ -20,13 +20,13 @@ def save_hs(nickname, score, level):
     hs["history"] = sorted(hs["history"], key=lambda x: x["score"], reverse=True)[:10]
     if score > hs["highscore"]:
         hs["highscore"] = score
-    with open("../JSON/highscores.json", "w", encoding="utf-8") as write_file:
+    with open("JSON/highscores.json", "w", encoding="utf-8") as write_file:
         json.dump(hs, write_file, ensure_ascii=False, indent=4)
     return hs["highscore"]
 
 
 # SAVED VARIABLES
-with open("../JSON/active_data.json", "r", encoding="utf-8") as read_file:
+with open("JSON/active_data.json", "r", encoding="utf-8") as read_file:
     data = json.load(read_file) # Au début je changeais tout en temps réel et crachais sur json parce que c'est éclaté mais en réalité il ne fallait juste pas l'uiliser de cette manière, désormais mon âme est en paix
 
 def save_game(new_player, level=1, used_monsters=None):
@@ -58,7 +58,7 @@ def save_game(new_player, level=1, used_monsters=None):
             "value": obj.value
         }
 
-    with open("../JSON/active_data.json", "w", encoding="utf-8") as write_file:
+    with open("JSON/active_data.json", "w", encoding="utf-8") as write_file:
         json.dump(data, write_file, indent=4, ensure_ascii=False)
 
 def saved_game(): # Retourne un boléen
@@ -92,7 +92,7 @@ def clear_save():
     if "weapon_slot_4" in data["player"]["weapons_inv"]:
         del data["player"]["weapons_inv"]["weapon_slot_4"]
 
-    with open("../JSON/active_data.json", "w", encoding="utf-8") as write_file:
+    with open("JSON/active_data.json", "w", encoding="utf-8") as write_file:
         json.dump(data, write_file, indent=4, ensure_ascii=False)
 
 

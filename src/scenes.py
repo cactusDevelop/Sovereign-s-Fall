@@ -37,7 +37,7 @@ BOSS_I_PV = 200
 BOSS_I_POWER = 15
 BOSS_SCALE = 1.20
 
-with open("../JSON/cst_data.json", "r", encoding="utf-8") as read_file:
+with open("JSON/cst_data.json", "r", encoding="utf-8") as read_file:
     cst = json.load(read_file)
     RANDOM_LINES = cst.get("rand_lines", ["\nTu t'enfonces dans les ténèbres à la recherche d'une réponse..."])
     WEAKNESSES = cst.get("weaknesses", {})

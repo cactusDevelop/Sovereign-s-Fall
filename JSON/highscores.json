@@ -42,14 +42,14 @@
             "level": 11
         },
         {
+            "nickname": "noob",
+            "score": 900,
+            "level": 10
+        },
+        {
             "nickname": "DEV",
             "score": 400,
             "level": 6
-        },
-        {
-            "nickname": "Cactusdev",
-            "score": 300,
-            "level": 5
         }
     ]
 }

@@ -71,7 +71,6 @@ def display_menu():
 
 
 def show_hs():  # [BALISE ONLINE HIGHSCORES]
-    clear_console()
     print("\n" + "=" * 5 + "| \033[1mALL TIME TOP 10\033[0m |" + "=" * (get_width() - 24))
 
     GOLD = "\033[38;5;220m"
@@ -201,6 +200,8 @@ if __name__ == "__main__":
             wait_input()
             run_fight_loop()
         elif menu_to == 3:
+            clear_console()
+            print()
             show_hs()
         elif menu_to == 4:
             clear_console()
